@@ -33,7 +33,7 @@ setup(
     author_email=AUTHOR_EMAIL,
     license=LICENSE,
     keywords=KEYWORDS,
-    packages=find_packages(join('src', 'tex_table')),
+    packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -45,5 +45,11 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Operating System :: OS Independent',
-    ]
+    ],
+    entry_point = {
+        'console_scripts': [
+            'whisper_ui = whisper_ui.ui:main'
+        ]
+    },
+    scripts=["run.sh"]
 )

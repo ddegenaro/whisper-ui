@@ -4,7 +4,7 @@ import json
 import whisper
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
-from handle_prefs import USER_PREFS, check_model
+from whisper_ui.handle_prefs import USER_PREFS, check_model
 
 SUPPORTED_FILETYPES = ('flac', 'm4a', 'mp3', 'wav')
 AVAILABLE_MODELS = whisper.available_models()

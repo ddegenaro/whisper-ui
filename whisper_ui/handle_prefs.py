@@ -3,7 +3,13 @@ import json
 
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
-USER_PREFS = json.load(open('user_prefs.json', 'r', encoding='utf-8'))
+USER_PREFS = json.load(
+    open(
+        os.path.join('whisper_ui', 'user_prefs.json'),
+         'r',
+         encoding='utf-8'
+    )
+)
 
 AVAILABLE_LANGUAGES = sorted(list(set(
     [x.title() for x in LANGUAGES.values()] +
@@ -82,7 +88,11 @@ def set_option(option: str, new_value):
     
     json.dump(
         USER_PREFS,
-        open('user_prefs.json', 'w+', encoding='utf-8'),
+        open(
+            os.path.join('whisper_ui', 'user_prefs.json'),
+            'w+',
+            encoding='utf-8'
+        ),
         indent=4
     )
     

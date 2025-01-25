@@ -12,8 +12,8 @@ from tkinter.filedialog import askopenfilename, askdirectory
 
 import whisper
 
-from whisper_funcs import transcribe, check_model, AVAILABLE_MODELS
-from handle_prefs import set_option, USER_PREFS, AVAILABLE_LANGUAGES
+from whisper_ui.whisper_funcs import transcribe, check_model, AVAILABLE_MODELS
+from whisper_ui.handle_prefs import set_option, USER_PREFS, AVAILABLE_LANGUAGES
 
 warnings.filterwarnings('ignore')
 
@@ -273,7 +273,12 @@ class MainGUI(Tk):
         self.select_language_desc.pack()
         self.select_language_entry.pack()
 
-if __name__ == "__main__":
-    
+
+
+def main():
     app = MainGUI()
     app.mainloop()
+
+
+if __name__ == "__main__":
+    main()
