@@ -5,7 +5,7 @@ from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
 USER_PREFS = json.load(
     open(
-        os.path.abspath(os.path.join('whisper_ui', 'user_prefs.json')),
+        os.path.join(os.path.dirname(__file__), 'user_prefs.json'),
          'r',
          encoding='utf-8'
     )
