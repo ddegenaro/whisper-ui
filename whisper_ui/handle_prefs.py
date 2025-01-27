@@ -50,9 +50,13 @@ def validate(option: str):
                 msg += 'You must navigate to "Download models" and download this model first.'
                 print(msg)
         m, l = USER_PREFS['model'], USER_PREFS['language']
-        if '.en' in m and l != 'English':
+        if '.en' in m and l not in ('None', 'English'):
             msg = f'Warning: "model" is set to "{m}" which is English-only, '
             msg += f'but "language" is set to {l}.\n'
+            msg += 'Whisper will assume all audio is English for this model selection.'
+            print(msg)
+        if '.en' in m and l == 'None':
+            msg = f'Warning: language detection is not available for English-only models.\n'
             msg += 'Whisper will assume all audio is English for this model selection.'
             print(msg)
         # assert l in AVAILABLE_LANGUAGES # TODO remove

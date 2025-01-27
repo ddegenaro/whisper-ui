@@ -25,6 +25,10 @@ else:
     model = None
     
 def map_available_language_to_valid_language(available_language):
+    
+    if available_language == 'None':
+        return None
+    
     al = available_language.lower()
     if al not in VALID_LANGUAGES:
         if al in LANGUAGES_FLIPPED and LANGUAGES_FLIPPED[al] in VALID_LANGUAGES:

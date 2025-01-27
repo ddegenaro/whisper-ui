@@ -232,7 +232,10 @@ def language_select_wrapper(event):
     global app
     new_value = app.language_clicked.get()
     set_option('language', new_value)
-    print(f'Assuming language "{new_value}".\n')
+    if new_value == 'None':
+        print(f'Detecting language automatically.\n')
+    else:
+        print(f'Assuming language "{new_value}."\n')
     
 def download_model(model_name):
     if not check_model(model_name):
@@ -487,7 +490,7 @@ class MainGUI(Tk):
         self.select_language_entry = ttk.Combobox(
             self.select_model_language_frame,
             textvariable=self.language_clicked,
-            values=AVAILABLE_LANGUAGES
+            values=['None'] + AVAILABLE_LANGUAGES
         )
         self.select_language_entry.current(AVAILABLE_LANGUAGES.index(USER_PREFS['language']))
         self.select_language_entry['state'] = 'readonly'
