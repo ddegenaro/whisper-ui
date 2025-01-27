@@ -1,6 +1,9 @@
 import os
+import re
 import json
 
+from torch import no_grad
+from torch.cuda import is_available
 import whisper
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
@@ -31,7 +34,7 @@ def map_available_language_to_valid_language(available_language):
     else:
         return al
 
-def get_model():
+def get_model(switch_model: bool = False):
     global model
     
     model_name = USER_PREFS["model"]
@@ -40,10 +43,9 @@ def get_model():
         print(f'\tWarning: model {model_name} not found in cache. Please download it.')
         return
     
-    if model is None:
+    if model is None or switch_model:
         print(f'\tLoading model {model_name}. This may take a while if you have never used this model.')
         print(f'\t\tChecking for GPU...')
-        from torch.cuda import is_available
         device = 'cuda' if is_available() else 'cpu'
         if device == 'cuda':
             print('\t\tGPU found.')
@@ -60,6 +62,8 @@ def get_model():
         print(f'\tLoaded model {model_name} successfully.')
     else:
         print(f'\tUsing currently loaded model ({model_name}).')
+        
+    model.eval()
 
 def format_outputs(outputs):
     
@@ -98,7 +102,33 @@ def format_outputs(outputs):
         'text': text_template_filled,
         'segmentation_lines': segmentation_lines
     }
+
+def make_paths(output_dir, fname):
     
+    txt_loc = os.path.join(output_dir, fname + '.txt')
+    seg_loc = os.path.join(output_dir, fname + '.seg')
+    json_loc = os.path.join(output_dir, fname + '.json')
+    
+    # if any of the files already exist, make new ones with incremented numbers
+    while any((os.path.exists(txt_loc), os.path.exists(seg_loc), os.path.exists(json_loc))):
+        
+        # if already numbered, just increment
+        endswith_suffix = re.search(r'_\d+$', fname)
+        if endswith_suffix:
+            fname = fname[:endswith_suffix.start()] +'_' + str(int(endswith_suffix.group()[1:])+1)
+        
+        # if not numbered, add _1
+        else:
+            fname += '_1'
+            
+        txt_loc = os.path.join(output_dir, fname + '.txt')
+        seg_loc = os.path.join(output_dir, fname + '.seg')
+        json_loc = os.path.join(output_dir, fname + '.json')
+    
+    # if none of the files exist, fname is fine
+    else:
+        return txt_loc, seg_loc, json_loc
+
 def write_outputs(outputs: dict, formatted_outputs: dict, fname: str):
     text = formatted_outputs['text']
     segmentation_lines = formatted_outputs['segmentation_lines']
@@ -106,24 +136,23 @@ def write_outputs(outputs: dict, formatted_outputs: dict, fname: str):
     output_dir = USER_PREFS['output_dir']
     os.makedirs(output_dir, exist_ok=True)
     
+    txt_loc, seg_loc, json_loc = make_paths(output_dir, fname)
+    
     if USER_PREFS['do_text']:
-        loc = os.path.join(output_dir, fname + '.txt')
-        with open(loc, 'w+', encoding='utf-8') as f:
+        with open(txt_loc, 'w+', encoding='utf-8') as f:
             f.write(text.strip())
-        print(f'\t\tWrote transcription to "{loc}".')
+        print(f'\t\tWrote transcription to "{txt_loc}".')
     if USER_PREFS['do_segmentation']:
-        loc = os.path.join(output_dir, fname + '.seg')
-        with open(loc, 'w+', encoding='utf-8') as g:
+        with open(seg_loc, 'w+', encoding='utf-8') as g:
             for line in segmentation_lines:
                 g.write(line.strip() + '\n')
-        print(f'\t\tWrote segmentation to "{loc}".')
+        print(f'\t\tWrote segmentation to "{seg_loc}".')
     if USER_PREFS['do_json']:
-        loc = os.path.join(output_dir, fname + '.json')
-        with open(loc, 'w+', encoding='utf-8') as h:
+        with open(json_loc, 'w+', encoding='utf-8') as h:
             json.dump(outputs, h, indent=4)
-        print(f'\t\tWrote JSON data to "{loc}".')
+        print(f'\t\tWrote JSON data to "{json_loc}".')
 
-def transcribe(paths):
+def transcribe(paths: list, switch_model: bool):
     
     global model
     
@@ -133,7 +162,7 @@ def transcribe(paths):
     
     print(f'Beginning transcription of {len(paths)} audio file(s).')
 
-    get_model()
+    get_model(switch_model=switch_model)
     
     for i, path in enumerate(paths):
         
@@ -155,10 +184,12 @@ def transcribe(paths):
                 open(os.path.join('test_outputs', 'example_output.json'), 'r', encoding='utf-8')
             )
         else:
-            outputs = model.transcribe(
-                whisper.load_audio(path),
-                language = map_available_language_to_valid_language(USER_PREFS['language'])
-            )
+            with no_grad():
+                outputs = model.transcribe(
+                    whisper.load_audio(path),
+                    language = map_available_language_to_valid_language(USER_PREFS['language']),
+                    task = 'translate' if USER_PREFS['do_translate'] else 'transcribe'
+                )
         formatted_outputs = format_outputs(outputs)
         write_outputs(outputs, formatted_outputs, fname)
         print('\tDone.')

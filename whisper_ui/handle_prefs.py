@@ -55,23 +55,16 @@ def validate(option: str):
             msg += f'but "language" is set to {l}.\n'
             msg += 'Whisper will assume all audio is English for this model selection.'
             print(msg)
-        assert l in AVAILABLE_LANGUAGES # TODO remove
+        # assert l in AVAILABLE_LANGUAGES # TODO remove
     
     elif option in ('text_template', 'text_insertion_symbol'):
         check_warn('text', 'text', 'transcribed text')
-    elif option == 'segmentation_template':
-        st = 'segmentation'
-        check_warn('segment', st, 'segmented text')
-        check_warn('start_time', st, 'segment start times')
-        check_warn('end_time', st, 'segment end times')
-    elif option == 'segment_insertion_symbol':
-        check_warn('segment', st, 'segmented text')
-    elif option == 'start_time_insertion_symbol':
-        check_warn('start_time', st, 'segment start times')
-    elif option == 'end_time_insertion_symbol':
-        check_warn('end_time', st, 'segment end times')
+    elif option in ('segmentation_template', 'segment_insertion_symbol', 'start_time_insertion_symbol', 'end_time_insertion_symbol'):
+        check_warn('segment', 'segmentation', 'segmented text')
+        check_warn('start_time', 'segmentation', 'segment start times')
+        check_warn('end_time', 'segmentation', 'segment end times')
     
-def set_option(option: str, new_value):
+def set_option(option: str, new_value, run_validate=True):
     
     if option not in USER_PREFS:
         raise ValueError(f'Invalid option: {option}.')
@@ -80,7 +73,8 @@ def set_option(option: str, new_value):
     
     try:
         USER_PREFS[option] = new_value
-        validate(option)
+        if run_validate:
+            validate(option)
     except AssertionError as e:
         USER_PREFS[option] = old_value
         print(f'Warning: failed to update option {option} to {new_value}. Reason:')
@@ -96,7 +90,7 @@ def set_option(option: str, new_value):
         indent=4
     )
     
-    msg = f'Updated "{option}" to "{new_value}". Saved successfully.\n'
+    # msg = f'Updated "{option}" to "{new_value}". Saved successfully.\n'
     
 if __name__ == "__main__":
     validate()

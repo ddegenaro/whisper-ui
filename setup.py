@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages
-from os.path import join
 
 # Package metadata
 NAME = 'whisper_ui'
-VERSION = '1.0'
+VERSION = '1.1'
 DESCRIPTION = 'A GUI for OpenAI\'s Whisper.'
 URL = 'https://github.com/dan-the-meme-man/tex-table'
 AUTHOR = 'Dan DeGenaro'
