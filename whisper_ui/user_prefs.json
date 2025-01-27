@@ -1,5 +1,5 @@
 {
-    "output_dir": "C:\\Users\\danie\\OneDrive\\Desktop\\Current\\Whisper UI\\test_outputs1",
+    "output_dir": "test_outputs",
     "model": "tiny.en",
     "language": "English",
     "do_translate": false,
@@ -10,7 +10,7 @@
     "start_time_insertion_symbol": "<<<START>>>",
     "end_time_insertion_symbol": "<<<END>>>",
     "do_text": true,
-    "do_segmentation": true,
-    "do_json": true,
+    "do_segmentation": false,
+    "do_json": false,
     "DEBUG": false
 }
