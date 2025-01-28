@@ -15,6 +15,9 @@ import whisper
 from whisper_ui.whisper_funcs import transcribe, check_model, AVAILABLE_MODELS
 from whisper_ui.handle_prefs import set_option, USER_PREFS, AVAILABLE_LANGUAGES
 
+if 'None' not in AVAILABLE_LANGUAGES:
+    AVAILABLE_LANGUAGES = ['None'] + AVAILABLE_LANGUAGES
+
 warnings.filterwarnings('ignore')
 
 app = None
@@ -490,7 +493,7 @@ class MainGUI(Tk):
         self.select_language_entry = ttk.Combobox(
             self.select_model_language_frame,
             textvariable=self.language_clicked,
-            values=['None'] + AVAILABLE_LANGUAGES
+            values=AVAILABLE_LANGUAGES
         )
         self.select_language_entry.current(AVAILABLE_LANGUAGES.index(USER_PREFS['language']))
         self.select_language_entry['state'] = 'readonly'
@@ -517,6 +520,7 @@ class MainGUI(Tk):
 
 
 def main():
+    # breakpoint()
     global app
     app = MainGUI()
     app.mainloop()

@@ -11,7 +11,7 @@ USER_PREFS = json.load(
     )
 )
 
-AVAILABLE_LANGUAGES = sorted(list(set(
+AVAILABLE_LANGUAGES = ['None'] + sorted(list(set(
     [x.title() for x in LANGUAGES.values()] +
     [x.title() for x in TO_LANGUAGE_CODE.keys()]
 )))
@@ -97,4 +97,5 @@ def set_option(option: str, new_value, run_validate=True):
     # msg = f'Updated "{option}" to "{new_value}". Saved successfully.\n'
     
 if __name__ == "__main__":
-    validate()
+    for pref in USER_PREFS:
+        validate(pref)

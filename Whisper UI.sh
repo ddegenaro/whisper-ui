@@ -10,14 +10,8 @@ fi
 
 echo "Preparing Whisper-UI. Do not close this window..."
 
-# Check if the pip package 'whisper-ui' is installed
-pip show whisper-ui > /dev/null 2>&1
-
-# If not installed, install it
-if [ $? -ne 0 ]; then
-    echo "Installing Python library..."
-    pip install whisper-ui
-fi
+echo Installing Whisper-UI/checking for updates...
+pip install -U whisper-ui
 
 # Run whisper-ui in the background, avoid opening a terminal window
 echo "Starting Whisper-UI..."
