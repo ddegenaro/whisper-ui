@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import glob
 import time
 from functools import partial
@@ -9,11 +10,12 @@ from tkinter import *
 from tkinter import messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 from tkinter.filedialog import askopenfilename, askdirectory
+from tkinterdnd2 import TkinterDnD, DND_ALL
 
 import whisper
 
-from whisper_ui.whisper_funcs import transcribe, check_model, AVAILABLE_MODELS
-from whisper_ui.handle_prefs import set_option, USER_PREFS, AVAILABLE_LANGUAGES
+from whisper_ui.whisper_funcs import AVAILABLE_MODELS, ModelInterface
+from whisper_ui.handle_prefs import set_option, check_model, USER_PREFS, AVAILABLE_LANGUAGES
 
 if 'None' not in AVAILABLE_LANGUAGES:
     AVAILABLE_LANGUAGES = ['None'] + AVAILABLE_LANGUAGES
@@ -21,6 +23,7 @@ if 'None' not in AVAILABLE_LANGUAGES:
 warnings.filterwarnings('ignore')
 
 app = None
+mi = None
 switch_model = False
 
 def raw(text: str) -> str:
@@ -202,15 +205,31 @@ def output_dir_choose_wrapper():
     
 def paths_wrapper():
     print(f'Clicking "Transcribe" will process:')
-    for path in glob.glob(app.glob_path_entry.get()):
-        print(f'\t{os.path.normpath(path)}')
+    if ';' in app.glob_path_entry.get():
+        for path in app.glob_path_entry.get().split(';'):
+            print(f'\t{os.path.normpath(path)}')
+    else:
+        for path in glob.glob(app.glob_path_entry.get()):
+            print(f'\t{os.path.normpath(path)}')
     print()
 
 def transcribe_wrapper():
     global app
+    global mi
     global switch_model
     set_output_dir_wrapper(log=False)
-    transcribe(glob.glob(app.glob_path_entry.get()), switch_model)
+    
+    if mi is None:
+        mi = ModelInterface()
+        
+    text = app.glob_path_entry.get()    
+    
+    if ';' in text:
+        files = text.split(';')
+    else:
+        files = glob.glob(text)
+    
+    mi.transcribe(files, switch_model)
     
 def set_output_dir_wrapper(log=True):
     global app
@@ -263,6 +282,20 @@ def reload():
     app = MainGUI()
     app.mainloop()
 
+def drop_file(event):
+    global app
+    raw_data = event.data.strip()
+
+    # Extract file paths: Matches either {wrapped path} or plain paths
+    files = re.findall(r'\{(.*?)\}|\S+', raw_data)  
+
+    # Convert to a semicolon-separated string
+    formatted_paths = ";".join(files)  
+
+    # Update the entry field
+    app.glob_path_entry.delete(0, len(app.glob_path_entry.get()))
+    app.glob_path_entry.insert(0, formatted_paths)
+
 class PrintLogger(object):  # create file like object
 
     def __init__(self, textbox: ScrolledText):  # pass reference to text widget
@@ -288,10 +321,10 @@ class PrintLogger(object):  # create file like object
 
 
 
-class MainGUI(Tk):
+class MainGUI(TkinterDnD.Tk):
 
     def __init__(self):
-        Tk.__init__(self)
+        TkinterDnD.Tk.__init__(self)
         # window
         self.title("Whisper User Interface")
         w = 896 # width for the Tk root
@@ -368,12 +401,14 @@ class MainGUI(Tk):
         self.file_path_entry_frame = Frame(self)
         self.glob_path_desc = Label(
             self.file_path_entry_frame,
-            text = "File path(s) to transcribe: "
+            text = "File path(s) to transcribe (type, drag, or File > Open): "
         )
         self.glob_path_entry = Entry(
             self.file_path_entry_frame,
             width=20
         )
+        self.glob_path_entry.drop_target_register(DND_ALL)
+        self.glob_path_entry.dnd_bind("<<Drop>>", lambda event: drop_file(event))
         self.glob_path_entry.insert(0, os.path.join('test_audio', '*.m4a'))
         self.transcribe_button = Button(
             self.file_path_entry_frame,
