@@ -87,7 +87,7 @@ def set_option(option: str, new_value, run_validate=True):
     json.dump(
         USER_PREFS,
         open(
-            os.path.join('whisper_ui', 'user_prefs.json'),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), 'user_prefs.json')),
             'w+',
             encoding='utf-8'
         ),
