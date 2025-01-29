@@ -17,7 +17,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "whisper"
+    "whisper",
+    "tkinterdnd2"
 ]
 
 [project.urls]
