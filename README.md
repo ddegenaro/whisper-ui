@@ -1,4 +1,4 @@
-# Whisper UI
+# Whisper UI 1.2.9
 
 A simple GUI to transcribe audio using OpenAI's Whisper models.
 
@@ -23,11 +23,11 @@ Whisper relies on a popular open-source audio/video converter called `ffmpeg`. Y
 
 ### Windows
 
-Download `Whisper UI.cmd` from this repository. Place it wherever you like on your computer. You can launch the program by running this file.
+Download `Whisper UI.cmd` from this repository. Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 
 ### Mac/Linux
 
-Download `Whisper UI.sh` from this repository. Place it wherever you like on your computer. You can launch the program by running this file.
+Download `Whisper UI.sh` from this repository. Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 
 ## Interface
 
@@ -55,9 +55,13 @@ Most of the window is occupied by the console, which will display information as
 
 #### Input files
 
-The first text box allows you to entire a Unix-style pathname pattern to find audio files you want to transcribe. You can enter an absolute or relative path to a file on your computer, or select multiple files by entering an asterisk (*) somewhere in the path. The asterisk can stand for (match) any folder or file name, and even partial folder and filenames. For instance, if you have a folder called `audio_files` which contains `sample1.mp3` and `sample2.mp3`, you can grab both of them at once by writing `audio_files/*.mp3` (or `audio_files/*` if there are no other files in the folder). You can fill this box by typing or by going to "File" > "Open file" or "File" > "Open audio directory."
+The first text box allows you to entire a Unix-style pathname pattern to find audio files you want to transcribe:
 
-Once you have entered a path, you can click "List files" to display a list of all files that were found.
+- You can enter an absolute or relative path to a file on your computer, or select multiple files by entering an asterisk (*) somewhere in the path. The asterisk can stand for (match) any folder or file name, and even partial folder and filenames. For instance, if you have a folder called `audio_files` which contains `sample1.mp3` and `sample2.mp3`, you can grab both of them at once by writing `audio_files/*.mp3` (or `audio_files/*` if there are no other files in the folder).
+- You can fill this box by typing or by going to "File" > "Open file" or "File" > "Open audio directory."
+- You can drag files onto the text box to fill it with their paths.
+
+Once you have entered a path or paths, you can click "List files" to display a list of all files that were found.
 
 If you are ready to transcribe, you can hit "Transcribe."
 
@@ -93,3 +97,9 @@ The three checkboxes below the second textbox allow you to control which kinds o
 "Currently selected Whisper language" displays the language Whisper will use to condition its output. You can set it to "NONE" if you prefer that Whisper automatically detect the spoken language. This may also be preferable for code-switched speech, but be advised that code-switched data in general is fairly hard to find in order to train speech models on it. As such, Whisper may handle code-switching rather poorly. Note that Whisper will generally struggle with low-resource languages.
 
 Check "Translate to English?" if you would like the transcript of your non-English audio to be output in English. Note that Whisper will generally struggle to translate from low-resource languages.
+
+## Future updates
+
+I plan to expand this project in the future to allow access to a curated collection of ASR models from HuggingFace, but this will take some time. Other models on HF under consideration include WhisperX and some NVIDIA speech models like Canary.
+
+I encourage feedback and suggestions for improvement. Please feel free to open an issue on this repository if you have any ideas or problems, or send me an email at [drd92@georgetown.edu](mailto:drd92@georgetown.edu).
