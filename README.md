@@ -1,4 +1,4 @@
-# Whisper UI 1.2.11
+# Whisper UI 1.2.12
 
 A simple GUI to transcribe audio using OpenAI's Whisper models.
 
@@ -63,7 +63,7 @@ The first text box allows you to entire a Unix-style pathname pattern to find au
 
 Once you have entered a path or paths, you can click "List files" to display a list of all files that were found.
 
-If you are ready to transcribe, you can hit "Transcribe."
+If you are ready to transcribe, you can hit "Transcribe." Acceptable filetypes include: `.flac`, `.m4a`, `.mp3`, `.mp4`, and `.wav`.
 
 #### Output files
 

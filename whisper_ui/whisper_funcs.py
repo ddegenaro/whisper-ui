@@ -9,7 +9,7 @@ from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
 from whisper_ui.handle_prefs import USER_PREFS, check_model
 
-SUPPORTED_FILETYPES = ('flac', 'm4a', 'mp3', 'wav')
+SUPPORTED_FILETYPES = ('flac', 'm4a', 'mp3', 'mp4', 'wav')
 AVAILABLE_MODELS = whisper.available_models()
 VALID_LANGUAGES = sorted(
     LANGUAGES.keys()
@@ -147,16 +147,16 @@ class ModelInterface:
         if USER_PREFS['do_text']:
             with open(txt_loc, 'w+', encoding='utf-8') as f:
                 f.write(text.strip())
-            print(f'\t\tWrote transcription to "{txt_loc}".')
+            print(f'\t\tWrote transcription to "{os.path.abspath(txt_loc)}".')
         if USER_PREFS['do_segmentation']:
             with open(seg_loc, 'w+', encoding='utf-8') as g:
                 for line in segmentation_lines:
                     g.write(line.strip() + '\n')
-            print(f'\t\tWrote segmentation to "{seg_loc}".')
+            print(f'\t\tWrote segmentation to "{os.path.abspath(seg_loc)}".')
         if USER_PREFS['do_json']:
             with open(json_loc, 'w+', encoding='utf-8') as h:
                 json.dump(outputs, h, indent=4)
-            print(f'\t\tWrote JSON data to "{json_loc}".')
+            print(f'\t\tWrote JSON data to "{os.path.abspath(json_loc)}".')
 
     def transcribe(self, paths: list, switch_model: bool):
         
