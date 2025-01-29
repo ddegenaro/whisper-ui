@@ -4,6 +4,8 @@ on: push
 
 jobs:
   convert_via_pandoc:
+    permissions:
+      contents: write
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
