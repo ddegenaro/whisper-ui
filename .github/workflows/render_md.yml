@@ -1,0 +1,24 @@
+name: Render Markdown to HTML
+
+on: push
+
+jobs:
+  convert_via_pandoc:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Convert README.md to HTML
+        uses: docker://pandoc/core:3.5
+        with:
+          args: >-
+            --standalone
+            --output=README.html
+            README.md
+
+      - name: Upload HTML as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-readme
+          path: README.html
