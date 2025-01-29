@@ -287,10 +287,20 @@ def drop_file(event):
     raw_data = event.data.strip()
 
     # Extract file paths: Matches either {wrapped path} or plain paths
-    files = re.findall(r'\{(.*?)\}|\S+', raw_data)  
+    files = re.findall(r'\{(.*?)\}|\S+', raw_data)
+    
+    # remove each match from the raw data
+    for file in files:
+        raw_data = raw_data.replace(file, '')
+        
+    # split on whitespace - default .split() handles multiple spaces/trailing spaces
+    files += raw_data.split()
+    
+    for file in files:
+        assert os.path.exists(file), f'File {file} does not exist.'
 
     # Convert to a semicolon-separated string
-    formatted_paths = ";".join(files)  
+    formatted_paths = ";".join(files)
 
     # Update the entry field
     app.glob_path_entry.delete(0, len(app.glob_path_entry.get()))
