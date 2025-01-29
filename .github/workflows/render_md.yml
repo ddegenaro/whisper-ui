@@ -8,6 +8,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true  # Ensures the action can push changes
 
       - name: Convert README.md to HTML
         uses: docker://pandoc/core:3.5
@@ -17,8 +19,10 @@ jobs:
             --output=README.html
             README.md
 
-      - name: Upload HTML as an artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: rendered-readme
-          path: README.html
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.html
+          git commit -m "Auto-generate README.html from GitHub Actions" || echo "No changes to commit"
+          git push
