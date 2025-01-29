@@ -287,7 +287,7 @@ def drop_file(event):
     raw_data = event.data.strip()
 
     # Extract file paths: Matches either {wrapped path} or plain paths
-    files = re.findall(r'\{(.*?)\}|\S+', raw_data)
+    files = re.findall(r'(\{.*?\})', raw_data)
     
     # remove each match from the raw data
     for file in files:
@@ -295,6 +295,12 @@ def drop_file(event):
         
     # split on whitespace - default .split() handles multiple spaces/trailing spaces
     files += raw_data.split()
+    
+    final_files = []
+    for i in range(len(files)):
+        files[i] = files[i].replace('{', '').replace('}', '').strip()
+        if files[i]:
+            final_files.append(files[i])
     
     for file in files:
         assert os.path.exists(file), f'File {file} does not exist.'
