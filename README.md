@@ -100,6 +100,6 @@ Check "Translate to English?" if you would like the transcript of your non-Engli
 
 ## Future updates
 
-I plan to expand this project in the future to allow access to a curated collection of ASR models from HuggingFace, but this will take some time. Other models on HF under consideration include WhisperX and some NVIDIA speech models like Canary.
+I plan to expand this project in the future to allow access to a curated collection of ASR models from HuggingFace, but this will take some time. [Other models on HF under consideration include WhisperX and some NVIDIA speech models like Canary and Parakeet.](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard)
 
-I encourage feedback and suggestions for improvement. Please feel free to open an issue on this repository if you have any ideas or problems, or send me an email at [drd92@georgetown.edu](mailto:drd92@georgetown.edu).
+I encourage feedback and suggestions for improvement. Please feel free to open an issue on [the Issues page](https://github.com/dan-the-meme-man/whisper-ui/issues) if you have any ideas or problems, or send me an email at [drd92@georgetown.edu](mailto:drd92@georgetown.edu).
