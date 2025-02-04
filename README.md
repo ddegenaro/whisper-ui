@@ -23,11 +23,11 @@ Whisper relies on a popular open-source audio/video converter called `ffmpeg`. Y
 
 ### Windows
 
-Download `Whisper UI.cmd` from this repository. Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+Download `Whisper UI.cmd` from this repository (or click the download link for Windows). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 
-### Mac/Linux
+### Linux/Mac
 
-Download `Whisper UI.sh` from this repository. Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+Download `Whisper UI.sh` from this repository (or click the download link for Linux/Mac). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 
 ## Interface
 
