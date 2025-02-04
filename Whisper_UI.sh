@@ -11,11 +11,12 @@ fi
 echo "Preparing Whisper-UI. Do not close this window..."
 
 echo Installing Whisper-UI/checking for updates...
+pip install torch
 pip install -U whisper-ui
 
 # Run whisper-ui in the background, avoid opening a terminal window
 echo "Starting Whisper-UI..."
-nohup pythonw -m whisper_ui > /dev/null 2>&1 &
+pythonw -m whisper_ui
 
 # Exit the script
 exit
