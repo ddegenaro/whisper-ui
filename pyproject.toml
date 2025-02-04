@@ -18,7 +18,8 @@ classifiers = [
 ]
 dependencies = [
     "whisper",
-    "tkinterdnd2"
+    "tkinterdnd2",
+    "torch"
 ]
 
 [project.urls]

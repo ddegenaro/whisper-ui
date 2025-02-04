@@ -17,7 +17,8 @@ with open('README.md', 'r') as f:
 # Define dependencies
 INSTALL_REQUIRES = [
     'whisper',
-    'tkinterdnd2'
+    'tkinterdnd2',
+    'torch'
     # Add other dependencies here
 ]
 
