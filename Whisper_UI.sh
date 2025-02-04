@@ -1,26 +1,13 @@
 #!/bin/bash
 
-# Check if the script is executable and prompt to make it so if not
-if [ ! -x "$0" ]; then
-    echo "This script is not executable. Making it executable now..."
-    chmod +x "$0"
-    echo "Re-run the script now: ./$0"
-    exit
-fi
-
 echo "Preparing Whisper-UI. Do not close this window..."
 
-echo Installing Whisper-UI/checking for updates...
-pip install torch
-pip install -U whisper
-pip install -U whisper-ui
-pip3 install torch
-pip3 install -U whisper
-pip3 install -U whisper-ui
+echo "Installing Whisper-UI/checking for updates..."
+python3 -m pip install --upgrade torch whisper whisper-ui
 
-# Run whisper-ui in the background, avoid opening a terminal window
+# Run whisper-ui in the background and log output
 echo "Starting Whisper-UI..."
-python -m whisper_ui
+nohup python3 -m whisper_ui > whisper_ui.log 2>&1 &
 
-# Exit the script
+echo "Whisper-UI started. Logs are available in whisper_ui.log."
 exit
