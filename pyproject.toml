@@ -17,7 +17,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "whisper",
+    "openai-whisper",
     "tkinterdnd2",
     "torch"
 ]

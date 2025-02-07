@@ -16,7 +16,7 @@ with open('README.md', 'r') as f:
 
 # Define dependencies
 INSTALL_REQUIRES = [
-    'whisper',
+    'openai-whisper',
     'tkinterdnd2',
     'torch'
     # Add other dependencies here

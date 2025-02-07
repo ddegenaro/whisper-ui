@@ -3,7 +3,7 @@
 echo "Preparing Whisper-UI. Do not close this window..."
 
 echo "Installing Whisper-UI/checking for updates..."
-python3 -m pip install --upgrade torch whisper whisper-ui
+python3 -m pip install --upgrade torch openai-whisper whisper_ui
 
 # Run whisper-ui in the background and log output
 echo "Starting Whisper-UI..."
