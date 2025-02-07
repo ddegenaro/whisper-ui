@@ -20,6 +20,7 @@ default = os.path.join(os.path.expanduser("~"), ".cache")
 download_root = os.path.join(os.getenv("XDG_CACHE_HOME", default), "whisper")
     
 def check_model(model_name):
+    os.makedirs(download_root, exist_ok=True)
     return model_name + '.pt' in os.listdir(download_root)
 
 def check_warn(pref_name: str, template_name: str, content: str):
