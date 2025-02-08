@@ -26,6 +26,64 @@ app = None
 mi = None
 switch_model = False
 
+WINDOWS_FFMPEG_LINK = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-lgpl.zip'
+LINUX_FFMPEG_LINK = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl.tar.xz'
+LINUX_ARM_FFMPEG_LINK = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linuxarm64-lgpl.tar.xz'
+MAC_FFMPEG_LINK = 'https://evermeet.cx/ffmpeg/getrelease/zip'
+
+def check_ffmpeg(log=True):
+    try:
+        os.system('ffmpeg -version')
+    except:
+        if log:
+            print(f'ffmpeg not found.')
+        return False
+    if log:
+        print('ffmpeg found.')
+    return True
+
+def ffmpeg_download():
+    if not check_ffmpeg(False):
+        result = messagebox.askokcancel(
+            'Confirm ffmpeg download',
+            f'Would you like to download and install ffmpeg?'
+        )
+        if result:
+            print(f'Downloading ffmpeg...')
+            
+            # if windows
+            if os.name == 'nt':
+                # download zip to downloads
+                os.system(f'start {WINDOWS_FFMPEG_LINK}')
+                # extract to C:\Program Files\ffmpeg
+                os.system('powershell.exe Expand-Archive -Path "$env:USERPROFILE\Downloads\ffmpeg-master-latest-win64-lgpl.zip" -DestinationPath "C:\Program Files"')
+                # add to path
+                os.system('setx path "%path%;C:\Program Files\ffmpeg\bin"')
+            # if linux
+            elif os.name == 'posix':
+                # download tar to downloads
+                os.system(f'wget {LINUX_FFMPEG_LINK} -O ~/Downloads/ffmpeg.tar.xz')
+                # extract to /usr/local/bin
+                os.system('tar -xf ~/Downloads/ffmpeg.tar.xz -C /usr/local/bin')
+                # add to path
+                os.system('echo "export PATH=$PATH:/usr/local/bin/ffmpeg" >> ~/.bashrc')
+            # if mac
+            elif os.name == 'mac':
+                # download zip to downloads
+                os.system(f'open {MAC_FFMPEG_LINK}')
+                # extract to /usr/local/bin
+                os.system('unzip ~/Downloads/ffmpeg-master-latest-win64-lgpl.zip -d /usr/local/bin')
+                # add to path
+                os.system('echo "export PATH=$PATH:/usr/local/bin/ffmpeg" >> ~/.bash_profile')
+            
+            print(f'Downloaded ffmpeg successfully. Reloading window...\n')
+            time.sleep(1)
+            reload()
+        else:
+            print(f'Download canceled.\n')
+    else:
+        print(f'ffmpeg already downloaded.\n')
+
 def raw(text: str) -> str:
     text = text.replace('\\t', '\t')
     return text
@@ -359,10 +417,12 @@ class MainGUI(TkinterDnD.Tk):
         
         # menu
         self.menu = Menu(self)
+        
         self.file_menu = Menu(self.menu, tearoff=False)
         self.file_menu.add_command(label='Open file', command=file_choose_wrapper)
         self.file_menu.add_command(label='Open audio directory', command=dir_choose_wrapper)
         self.file_menu.add_command(label='Choose output directory', command=output_dir_choose_wrapper)
+        
         self.models_menu = Menu(self.menu, tearoff=False)
         for model_name in AVAILABLE_MODELS:
             if check_model(model_name):
@@ -375,11 +435,24 @@ class MainGUI(TkinterDnD.Tk):
                     label=model_name + ' ⤓',
                     command=partial(download_model, model_name)
                 )
+                
         self.debug_menu = Menu(self.menu, tearoff=False)
         self.debug_menu.add_command(label='Reload window', command=reload)
+        
+        self.deps_menu = Menu(self.menu, tearoff=False)
+        self.deps_menu.add_command(
+            label='Check for ffmpeg',
+            command=check_ffmpeg
+        )
+        self.deps_menu.add_command(
+            label='Install ffmpeg',
+            command=ffmpeg_download
+        )
+        
         self.menu.add_cascade(label='File', menu=self.file_menu)
         self.menu.add_cascade(label='Download models', menu=self.models_menu)
         self.menu.add_cascade(label='Debug', menu=self.debug_menu)
+        self.menu.add_cascade(label='Dependencies', menu=self.deps_menu)
         self.config(menu=self.menu)
         
         

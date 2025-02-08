@@ -1,7 +1,8 @@
 @echo off
-echo Preparing Whisper-UI. Do not close this window.
+echo Preparing Whisper-UI. Do not close this window...
 
 echo Installing Whisper-UI/checking for updates...
+
 where python >nul 2>nul
 if %errorlevel%==0 (
     python -m pip install --upgrade torch openai-whisper whisper_ui
@@ -15,4 +16,3 @@ if %errorlevel%==0 (
 
 echo Whisper-UI started. Logs are available in whisper_ui.log.
 exit
-

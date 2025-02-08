@@ -19,7 +19,11 @@ After installation, it is simple to confirm that everything went well:
 - If the output is not "Python 3.11.0" (or some higher version like 3.11.1 or 3.12.0), your version is too low.
 - Enter `python -c "import tkinter"`. If nothing happens, you are all set. If you see some error, `tkinter` was not installed with your Python distribution.
 
-Whisper relies on a popular open-source audio/video converter called `ffmpeg`. You must install this as well. Here is a [Windows tutorial](https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/), as well as [a good StackExchange post for Mac](https://superuser.com/questions/624561/install-ffmpeg-on-os-x).
+Whisper relies on a popular open-source audio/video converter called `ffmpeg`. You must install this as well.
+
+[ffmpeg source code for Windows](https://github.com/BtbN/FFmpeg-Builds/archive/refs/tags/latest.zip)
+
+ Here is a [Windows tutorial](https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/), as well as [a good StackExchange post for Mac](https://superuser.com/questions/624561/install-ffmpeg-on-os-x).
 
 ### Windows
 

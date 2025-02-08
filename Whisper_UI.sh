@@ -3,7 +3,6 @@
 echo "Preparing Whisper-UI. Do not close this window..."
 
 echo "Installing Whisper-UI/checking for updates..."
-#!/bin/sh
 
 if command -v python >/dev/null 2>&1; then
     python -m pip install --upgrade torch openai-whisper whisper_ui
