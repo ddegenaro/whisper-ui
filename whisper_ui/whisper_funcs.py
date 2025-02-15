@@ -1,9 +1,11 @@
 import os
+import platform
 import re
 import json
 
 from torch import no_grad
-from torch.cuda import is_available
+from torch import cuda
+from torch.backends import mps
 import whisper
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
@@ -52,8 +54,15 @@ class ModelInterface:
         if self.model is None or switch_model:
             print(f'\tLoading model {model_name}. This may take a while if you have never used this model.')
             print(f'\t\tChecking for GPU...')
-            device = 'cuda' if is_available() else 'cpu'
-            if device == 'cuda':
+            
+            # check if mac
+            if platform.system() == 'Darwin':
+                # check if mps is available
+                if mps.is_available():
+                    device = 'mps'
+            else:
+                device = 'cuda' if cuda.is_available() else 'cpu'
+            if device == 'cuda' or device == 'mps':
                 print('\t\tGPU found.')
             else:
                 print('\t\tNo GPU found. Using CPU.')

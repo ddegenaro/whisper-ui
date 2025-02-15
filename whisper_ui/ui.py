@@ -325,7 +325,12 @@ def download_model(model_name):
         )
         if result:
             print(f'Downloading model {model_name}...')
-            whisper.load_model(name=model_name)
+            try:
+                whisper.load_model(name=model_name)
+            except:
+                import ssl
+                ssl._create_default_https_context = ssl._create_unverified_context
+                whisper.load_model(name=model_name)
             print(f'Downloaded model {model_name} successfully. Reloading window...\n')
             time.sleep(1)
             reload()
