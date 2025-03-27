@@ -29,9 +29,19 @@ Whisper relies on a popular open-source audio/video converter called `ffmpeg`. Y
 
 Download `Whisper UI.cmd` from this repository (or click the download link for Windows). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 
-### Linux/Mac
+### Mac
 
-Download `Whisper_UI.app` from this repository (or click the download link for Linux/Mac). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+Download `Whisper_UI.app` from this repository (or click the download link for Mac). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+
+#### If the file does not run right away on Mac
+
+- First, make the file executable as follows. Assuming you downloaded the file to your Downloads folder, open a terminal and enter:
+
+```bash
+chmod -R +x ~/Downloads/Whisper_UI.app
+```
+
+Next, try running the file again. If it still does not work, open your System Settings. Go to "Security & Privacy", scroll down to the "Security" section, and click "Open Anyway" next to the message about the file being blocked.
 
 ## Interface
 
