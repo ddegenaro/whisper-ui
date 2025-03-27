@@ -31,7 +31,7 @@ Download `Whisper UI.cmd` from this repository (or click the download link for W
 
 ### Linux/Mac
 
-Download `Whisper UI.sh` from this repository (or click the download link for Linux/Mac). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+Download `Whisper_UI.app` from this repository (or click the download link for Linux/Mac). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 
 ## Interface
 
