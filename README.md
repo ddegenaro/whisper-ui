@@ -21,27 +21,49 @@ After installation, it is simple to confirm that everything went well:
 
 Whisper relies on a popular open-source audio/video converter called `ffmpeg`. You must install this as well.
 
-[ffmpeg source code for Windows](https://github.com/BtbN/FFmpeg-Builds/archive/refs/tags/latest.zip)
-
- Here is a [Windows tutorial](https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/), as well as [a good StackExchange post for Mac](https://superuser.com/questions/624561/install-ffmpeg-on-os-x).
-
-### Windows
-
-Download `Whisper UI.cmd` from this repository (or click the download link for Windows). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
-
 ### Mac
 
-Download `Whisper_UI.app` from this repository (or click the download link for Mac). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+#### Mac ffmpeg installation
+
+If you have Homebrew installed, you can install `ffmpeg` by running the following command in a terminal window:
+
+```bash
+brew install ffmpeg
+```
+
+If you do not have Homebrew, you can install it by running the following command in a terminal window:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+If this doesn't work, there is a tutorial [here](https://superuser.com/questions/624561/install-ffmpeg-on-os-x) with a few other options, but `brew` is definitely the simplest.
+
+#### Mac Whisper-UI installation
+
+Download `Whisper_UI.command` from this repository (or click the download link for Mac). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 
 #### If the file does not run right away on Mac
 
 - First, make the file executable as follows. Assuming you downloaded the file to your Downloads folder, open a terminal and enter:
 
 ```bash
-chmod -R +x ~/Downloads/Whisper_UI.app
+chmod -R +x ~/Downloads/Whisper_UI.command
 ```
 
 Next, try running the file again. If it still does not work, open your System Settings. Go to "Security & Privacy", scroll down to the "Security" section, and click "Open Anyway" next to the message about the file being blocked.
+
+### Windows
+
+#### Windows ffmpeg installation
+
+Here is a [Windows tutorial](https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/). You can download and extract the .zip below, and then follow the tutorial to add `ffmpeg` to your PATH.
+
+[ffmpeg source code for Windows](https://github.com/BtbN/FFmpeg-Builds/archive/refs/tags/latest.zip)
+
+#### Windows Whisper-UI installation
+
+Download `Whisper UI.cmd` from this repository (or click the download link for Windows). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 
 ## Interface
 
