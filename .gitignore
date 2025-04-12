@@ -4,3 +4,4 @@ test_outputs/
 dist/
 whisper_ui/test.py
 whisper_ui/faster_whisper_funcs.py
+.vs/

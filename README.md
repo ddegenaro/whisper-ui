@@ -4,64 +4,112 @@ A simple GUI to transcribe audio using OpenAI's Whisper models.
 
 ## Installation
 
-Whisper-UI requires Python.
-
-If you are not familiar with Python, be sure to install from [python.org](https://www.python.org/). Be sure to confirm the following:
-
-- If you see a checkbox about adding Python to your PATH, be sure to check it.
-- You should install Python version 3.11.0 or higher.
-- If you see a checkbox about installing `tkinter`, `tk`, or `tcl`, be sure to check it. `tkinter` is required for this program to run.
-
-After installation, it is simple to confirm that everything went well:
-
-- Open a terminal window or command prompt.
-- Enter `python --version`. If `python` is unrecognized, then Python has not been added to your PATH (or is not installed).
-- If the output is not "Python 3.11.0" (or some higher version like 3.11.1 or 3.12.0), your version is too low.
-- Enter `python -c "import tkinter"`. If nothing happens, you are all set. If you see some error, `tkinter` was not installed with your Python distribution.
-
-Whisper relies on a popular open-source audio/video converter called `ffmpeg`. You must install this as well.
-
 ### Mac
 
-#### Mac ffmpeg installation
+#### Python for Mac
 
-If you have Homebrew installed, you can install `ffmpeg` by running the following command in a terminal window:
+Install Python 3.11.0 or higher. [Here is a direct link to an installer for 3.11.9](https://www.python.org/ftp/python/3.11.9/python-3.11.9-macos11.pkg).
+
+To confirm that Python is installed, open a terminal window and run the following command:
 
 ```bash
-brew install ffmpeg
+python3 --version
 ```
 
-If you do not have Homebrew, you can install it by running the following command in a terminal window:
+#### FFmpeg for Mac
+
+The simplest way to install `ffmpeg` is to use `brew`. You can install `brew` by running the following command in a terminal window:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-If this doesn't work, there is a tutorial [here](https://superuser.com/questions/624561/install-ffmpeg-on-os-x) with a few other options, but `brew` is definitely the simplest.
+Once this command finishes running, you can follow the instructions printed out in the terminal window to add `brew` to your path.
 
-#### Mac Whisper-UI installation
+Then, you can install `ffmpeg` by running the following command:
 
-Download `Whisper_UI.command` from this repository (or click the download link for Mac). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+```bash
+brew install ffmpeg
+```
 
-#### If the file does not run right away on Mac
+You can confirm that `ffmpeg` is installed by running the following command:
 
-- First, make the file executable as follows. Assuming you downloaded the file to your Downloads folder, open a terminal and enter:
+```bash
+ffmpeg -version
+```
+
+#### Whisper-UI for Mac
+
+Download `Whisper_UI.command` from the link above (click on Download for Mac). I recommend placing the file in your Downloads folder for now.
+
+Assuming you downloaded the file to your Downloads folder, open a terminal and enter:
 
 ```bash
 chmod -R +x ~/Downloads/Whisper_UI.command
 ```
 
-Next, try running the file again. If it still does not work, open your System Settings. Go to "Security & Privacy", scroll down to the "Security" section, and click "Open Anyway" next to the message about the file being blocked.
+Next, try running the file. If it does not work, open your System Settings. Go to "Security & Privacy", scroll down to the "Security" section, and click "Open Anyway" next to the message about the file being blocked.
 
 ### Windows
 
-#### Windows ffmpeg installation
+#### Python for Windows
 
-Here is a [Windows tutorial](https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/). You can download and extract the .zip below, and then follow the tutorial to add `ffmpeg` to your PATH.
+Install Python 3.11.0 or higher. [Here is a direct link to an installer for 3.11.9 if you have 64-bit Windows](https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe). If you have 32 bit Windows, you can use [this link](https://www.python.org/ftp/python/3.11.9/python-3.11.9.exe). Be sure to check the box to add Python to your PATH when you run the installer, and to install any optional add-ons like `tcl`, `tk`, `tkinter`, and `pip` if you are given the option.
 
-[ffmpeg source code for Windows](https://github.com/BtbN/FFmpeg-Builds/archive/refs/tags/latest.zip)
+To confirm that Python is installed, open a terminal window and run the following command:
 
-#### Windows Whisper-UI installation
+```bash
+python --version
+```
+
+#### FFmpeg for Windows (credits to Jack Gagnon for documenting this process)
+
+1. Run PowerShell as Administrator
+
+    a. Type the Windows key and type "PowerShell" into the search bar.
+    b. In the options of the top result, select "Run as Administrator."
+    c. Press "Okay" to allow the app to make changes to your device.
+    d. You should now get a terminal window titled "Administrator: Windows PowerShell" with the cursor on a line that reads:
+
+    ```text
+    PS C:\Windows\system32>
+    ```
+
+2. Install Chocolatey from PowerShell
+
+    a. Copy and paste the following command and press `Enter`:
+
+    ```powershell
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    ```
+
+    b. The command will take a dozen or so seconds to complete. When it is done, you should see a new line with `PS C:\Windows\system32>` again.
+    c. Type `choco` and press `Enter`. You should get the following feedback in green text.
+
+    ```text
+    Chocolatey v2.4.3
+    Please run 'choco -?' or 'choco <command> -?' for help menu.
+    ```
+
+    d. If you encounter an error (like if you weren't in Admin mode) and want to try reinstalling by running the command in (a) again, first navigate in your File Explorer to This PC > Windows (C:) > ProgramData, and then, if you see a folder named `chocolatey`, delete it.
+
+3. Install FFmpeg
+
+    a. From the PowerShell, run the following command:
+
+    ```powershell
+    choco install ffmpeg
+    ```
+
+    b. To confirm that FFmpeg is installed, run:
+
+    ```powershell
+    ffmpeg -version
+    ```
+
+    c. If you get an error, try restarting your computer and running the command again.
+
+#### Whisper-UI for Windows
 
 Download `Whisper UI.cmd` from this repository (or click the download link for Windows). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
 

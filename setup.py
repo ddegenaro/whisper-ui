@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 NAME = 'whisper_ui'
 VERSION = '1.2.16'
 DESCRIPTION = 'A GUI for OpenAI\'s Whisper.'
-URL = 'https://github.com/dan-the-meme-man/tex-table'
+URL = 'https://github.com/ddegenaro/whisper-ui'
 AUTHOR = 'Dan DeGenaro'
 AUTHOR_EMAIL = 'drd92@georgetown.edu'
 LICENSE = 'MIT'
@@ -18,7 +18,8 @@ with open('README.md', 'r') as f:
 INSTALL_REQUIRES = [
     'openai-whisper',
     'tkinterdnd2',
-    'torch'
+    'torch==2.6.0',
+    'numpy==2.1.2'
     # Add other dependencies here
 ]
 
@@ -52,5 +53,5 @@ setup(
             'whisper_ui = whisper_ui.ui:main'
         ]
     },
-    scripts=["Whisper UI.cmd", "Whisper UI.sh"]
+    scripts=["Whisper_UI.command", "Whisper UI.cmd"]
 )

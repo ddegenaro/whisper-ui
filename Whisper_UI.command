@@ -2,50 +2,59 @@
 
 echo "Preparing Whisper-UI. Do not close this window..."
 
-echo "Installing Whisper-UI/checking for updates..."
-
-if command -v ffmpeg >/dev/null 2>&1; then
-    echo "ffmpeg found."
+# Check for Python
+if command -v python3 &>/dev/null; then
+    PYTHON_NAME=python3
+elif command -v python &>/dev/null; then
+    PYTHON_NAME=python
 else
-    echo "Attempting to install ffmpeg. You may be prompted for your password."
-    if command -v apt-get >/dev/null 2>&1; then
-        sudo apt-get install ffmpeg
-    elif command -v yum >/dev/null 2>&1; then
-        sudo yum install ffmpeg
-    elif command -v brew >/dev/null 2>&1; then
-        brew install ffmpeg
-    elif command -v pacman >/dev/null 2>&1; then
-        sudo pacman -S ffmpeg
-    elif command -v zypper >/dev/null 2>&1; then
-        sudo zypper install ffmpeg
-    elif command -v apk >/dev/null 2>&1; then
-        sudo apk add ffmpeg
-    elif command -v pkg >/dev/null 2>&1; then
-        sudo pkg install ffmpeg
-    elif command -v dnf >/dev/null 2>&1; then
-        sudo dnf install ffmpeg
-    elif command -v xbps-install >/dev/null 2>&1; then
-        sudo xbps-install -S ffmpeg
-    elif command -v emerge >/dev/null 2>&1; then
-        sudo emerge -av media-video/ffmpeg
-    elif command -v nix-env >/dev/null 2>&1; then
-        nix-env -iA nixpkgs.ffmpeg
-    elif command -v guix package >/dev/null 2>&1; then
-        guix package -i ffmpeg
-    else
-        echo "Couldn't install ffmpeg for you."
+    echo "Python not found. Please install Python, be sure to add it to your path, and try again."
+    read -p "Press any key to exit..."
+    exit 1
+fi
+
+# Check for ffmpeg
+if ! command -v ffmpeg &>/dev/null; then
+    echo "ffmpeg not found. Please install FFmpeg, be sure to add it to your path, and try again."
+    read -p "Press any key to exit..."
+    exit 1
+fi
+
+# Setup directories
+VENV_DIR="$HOME/.whisper_ui/.venv"
+LOG_DIR="$HOME/.whisper_ui"
+LOG_FILE="$LOG_DIR/whisper_ui.log"
+
+# Create directory if needed
+if [ ! -d "$LOG_DIR" ]; then
+    mkdir -p "$LOG_DIR"
+fi
+
+# Check for virtual environment
+if [ ! -d "$VENV_DIR" ]; then
+    echo "Creating virtual environment..."
+    $PYTHON_NAME -m venv "$VENV_DIR"
+    if [ $? -ne 0 ]; then
+        echo "Failed to create virtual environment."
+        read -p "Press any key to exit..."
+        exit 1
     fi
-fi
-
-if command -v python >/dev/null 2>&1; then
-    python -m pip install --upgrade torch openai-whisper whisper_ui
-    echo "Starting Whisper-UI..."
-    nohup python -m whisper_ui > whisper_ui.log 2>&1 &
+    
+    source "$VENV_DIR/bin/activate"
+    
+    echo "Installing packages..."
+    $PYTHON_NAME -m pip install uv
+    $PYTHON_NAME -m uv pip install --upgrade whisper_ui
 else
-    python3 -m pip install --upgrade torch openai-whisper whisper_ui
-    echo "Starting Whisper-UI..."
-    nohup python3 -m whisper_ui > whisper_ui.log 2>&1 &
+    echo "Using existing virtual environment..."
+    source "$VENV_DIR/bin/activate"
+
+    echo "Checking for updates..."
+    $PYTHON_NAME -m uv pip install --upgrade whisper_ui
 fi
 
-echo "Whisper-UI started. Logs are available in whisper_ui.log."
-exit
+echo "Starting Whisper-UI..."
+nohup "$VENV_DIR/bin/python" -m whisper_ui > "$LOG_FILE" 2>&1 &
+
+echo "Whisper-UI started. Logs available at: $LOG_FILE"
+sleep 3
