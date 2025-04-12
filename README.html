@@ -236,76 +236,113 @@
 <h1 id="whisper-ui-1.2.16">Whisper UI 1.2.16</h1>
 <p>A simple GUI to transcribe audio using OpenAI’s Whisper models.</p>
 <h2 id="installation">Installation</h2>
-<p>Whisper-UI requires Python.</p>
-<p>If you are not familiar with Python, be sure to install from <a
-href="https://www.python.org/">python.org</a>. Be sure to confirm the
-following:</p>
-<ul>
-<li>If you see a checkbox about adding Python to your PATH, be sure to
-check it.</li>
-<li>You should install Python version 3.11.0 or higher.</li>
-<li>If you see a checkbox about installing <code>tkinter</code>,
-<code>tk</code>, or <code>tcl</code>, be sure to check it.
-<code>tkinter</code> is required for this program to run.</li>
-</ul>
-<p>After installation, it is simple to confirm that everything went
-well:</p>
-<ul>
-<li>Open a terminal window or command prompt.</li>
-<li>Enter <code>python --version</code>. If <code>python</code> is
-unrecognized, then Python has not been added to your PATH (or is not
-installed).</li>
-<li>If the output is not “Python 3.11.0” (or some higher version like
-3.11.1 or 3.12.0), your version is too low.</li>
-<li>Enter <code>python -c "import tkinter"</code>. If nothing happens,
-you are all set. If you see some error, <code>tkinter</code> was not
-installed with your Python distribution.</li>
-</ul>
-<p>Whisper relies on a popular open-source audio/video converter called
-<code>ffmpeg</code>. You must install this as well.</p>
 <h3 id="mac">Mac</h3>
-<h4 id="mac-ffmpeg-installation">Mac ffmpeg installation</h4>
-<p>If you have Homebrew installed, you can install <code>ffmpeg</code>
-by running the following command in a terminal window:</p>
+<h4 id="python-for-mac">Python for Mac</h4>
+<p>Install Python 3.11.0 or higher. <a
+href="https://www.python.org/ftp/python/3.11.9/python-3.11.9-macos11.pkg">Here
+is a direct link to an installer for 3.11.9</a>.</p>
+<p>To confirm that Python is installed, open a terminal window and run
+the following command:</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install ffmpeg</span></code></pre></div>
-<p>If you do not have Homebrew, you can install it by running the
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">--version</span></span></code></pre></div>
+<h4 id="ffmpeg-for-mac">FFmpeg for Mac</h4>
+<p>The simplest way to install <code>ffmpeg</code> is to use
+<code>brew</code>. You can install <code>brew</code> by running the
 following command in a terminal window:</p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/bash</span> <span class="at">-c</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
-<p>If this doesn’t work, there is a tutorial <a
-href="https://superuser.com/questions/624561/install-ffmpeg-on-os-x">here</a>
-with a few other options, but <code>brew</code> is definitely the
-simplest.</p>
-<h4 id="mac-whisper-ui-installation">Mac Whisper-UI installation</h4>
-<p>Download <code>Whisper_UI.command</code> from this repository (or
-click the download link for Mac). Place it wherever you like on your
-computer. You can launch the program by running this file. Expect it to
-take a bit of time to start up the first time you run it as it installs
-itself.</p>
-<h4 id="if-the-file-does-not-run-right-away-on-mac">If the file does not
-run right away on Mac</h4>
-<ul>
-<li>First, make the file executable as follows. Assuming you downloaded
-the file to your Downloads folder, open a terminal and enter:</li>
-</ul>
+<p>Once this command finishes running, you can follow the instructions
+printed out in the terminal window to add <code>brew</code> to your
+path.</p>
+<p>Then, you can install <code>ffmpeg</code> by running the following
+command:</p>
 <div class="sourceCode" id="cb3"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> +x ~/Downloads/Whisper_UI.command</span></code></pre></div>
-<p>Next, try running the file again. If it still does not work, open
-your System Settings. Go to “Security &amp; Privacy”, scroll down to the
-“Security” section, and click “Open Anyway” next to the message about
-the file being blocked.</p>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install ffmpeg</span></code></pre></div>
+<p>You can confirm that <code>ffmpeg</code> is installed by running the
+following command:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-version</span></span></code></pre></div>
+<h4 id="whisper-ui-for-mac">Whisper-UI for Mac</h4>
+<p>Download <code>Whisper_UI.command</code> from the link above (click
+on Download for Mac). I recommend placing the file in your Downloads
+folder for now.</p>
+<p>Assuming you downloaded the file to your Downloads folder, open a
+terminal and enter:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> +x ~/Downloads/Whisper_UI.command</span></code></pre></div>
+<p>Next, try running the file. If it does not work, open your System
+Settings. Go to “Security &amp; Privacy”, scroll down to the “Security”
+section, and click “Open Anyway” next to the message about the file
+being blocked.</p>
 <h3 id="windows">Windows</h3>
-<h4 id="windows-ffmpeg-installation">Windows ffmpeg installation</h4>
-<p>Here is a <a
-href="https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/">Windows
-tutorial</a>. You can download and extract the .zip below, and then
-follow the tutorial to add <code>ffmpeg</code> to your PATH.</p>
-<p><a
-href="https://github.com/BtbN/FFmpeg-Builds/archive/refs/tags/latest.zip">ffmpeg
-source code for Windows</a></p>
-<h4 id="windows-whisper-ui-installation">Windows Whisper-UI
-installation</h4>
+<h4 id="python-for-windows">Python for Windows</h4>
+<p>Install Python 3.11.0 or higher. <a
+href="https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe">Here
+is a direct link to an installer for 3.11.9 if you have 64-bit
+Windows</a>. If you have 32 bit Windows, you can use <a
+href="https://www.python.org/ftp/python/3.11.9/python-3.11.9.exe">this
+link</a>. Be sure to check the box to add Python to your PATH when you
+run the installer, and to install any optional add-ons like
+<code>tcl</code>, <code>tk</code>, <code>tkinter</code>, and
+<code>pip</code> if you are given the option.</p>
+<p>To confirm that Python is installed, open a terminal window and run
+the following command:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">--version</span></span></code></pre></div>
+<h4
+id="ffmpeg-for-windows-credits-to-jack-gagnon-for-documenting-this-process">FFmpeg
+for Windows (credits to Jack Gagnon for documenting this process)</h4>
+<ol type="1">
+<li><p>Run PowerShell as Administrator</p>
+<ol type="a">
+<li>Type the Windows key and type “PowerShell” into the search bar.</li>
+<li>In the options of the top result, select “Run as
+Administrator.”</li>
+<li>Press “Okay” to allow the app to make changes to your device.</li>
+<li>You should now get a terminal window titled “Administrator: Windows
+PowerShell” with the cursor on a line that reads:</li>
+</ol>
+<pre class="text"><code>PS C:\Windows\system32&gt;</code></pre></li>
+<li><p>Install Chocolatey from PowerShell</p>
+<ol type="a">
+<li>Copy and paste the following command and press
+<code>Enter</code>:</li>
+</ol>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Set-ExecutionPolicy</span> Bypass <span class="op">-</span>Scope <span class="cf">Process</span> <span class="op">-</span>Force<span class="op">;</span> <span class="op">[</span>System<span class="op">.</span><span class="fu">Net</span><span class="op">.</span><span class="fu">ServicePointManager</span><span class="op">]::</span>SecurityProtocol <span class="op">=</span> <span class="op">[</span>System<span class="op">.</span><span class="fu">Net</span><span class="op">.</span><span class="fu">ServicePointManager</span><span class="op">]::</span>SecurityProtocol <span class="op">-bor</span> <span class="dv">3072</span><span class="op">;</span> <span class="fu">iex</span> <span class="op">((</span><span class="fu">New-Object</span> System<span class="op">.</span><span class="fu">Net</span><span class="op">.</span><span class="fu">WebClient</span><span class="op">).</span><span class="fu">DownloadString</span><span class="op">(</span><span class="st">&#39;https://community.chocolatey.org/install.ps1&#39;</span><span class="op">))</span></span></code></pre></div>
+<ol start="2" type="a">
+<li>The command will take a dozen or so seconds to complete. When it is
+done, you should see a new line with
+<code>PS C:\Windows\system32&gt;</code> again.</li>
+<li>Type <code>choco</code> and press <code>Enter</code>. You should get
+the following feedback in green text.</li>
+</ol>
+<pre class="text"><code>Chocolatey v2.4.3
+Please run &#39;choco -?&#39; or &#39;choco &lt;command&gt; -?&#39; for help menu.</code></pre>
+<ol start="4" type="a">
+<li>If you encounter an error (like if you weren’t in Admin mode) and
+want to try reinstalling by running the command in (a) again, first
+navigate in your File Explorer to This PC &gt; Windows (C:) &gt;
+ProgramData, and then, if you see a folder named
+<code>chocolatey</code>, delete it.</li>
+</ol></li>
+<li><p>Install FFmpeg</p>
+<ol type="a">
+<li>From the PowerShell, run the following command:</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>choco install ffmpeg</span></code></pre></div>
+<ol start="2" type="a">
+<li>To confirm that FFmpeg is installed, run:</li>
+</ol>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ffmpeg <span class="op">-</span>version</span></code></pre></div>
+<ol start="3" type="a">
+<li>If you get an error, try restarting your computer and running the
+command again.</li>
+</ol></li>
+</ol>
+<h4 id="whisper-ui-for-windows">Whisper-UI for Windows</h4>
 <p>Download <code>Whisper UI.cmd</code> from this repository (or click
 the download link for Windows). Place it wherever you like on your
 computer. You can launch the program by running this file. Expect it to
