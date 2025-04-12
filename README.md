@@ -48,7 +48,9 @@ Assuming you downloaded the file to your Downloads folder, open a terminal and e
 chmod -R +x ~/Downloads/Whisper_UI.command
 ```
 
-Next, try running the file. If it does not work, open your System Settings. Go to "Security & Privacy", scroll down to the "Security" section, and click "Open Anyway" next to the message about the file being blocked.
+Once you have done this step, you can place this script wherever you like on your computer to access it easily. You can launch the program by double-clicking on this script. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+
+***NOTE:*** If Mac OS blocks you from running the script, open your System Settings. Go to "Security & Privacy", scroll down to the "Security" section, and click "Open Anyway" next to the message about the file being blocked. If you don't see this message, try restarting your computer and running the script again.
 
 ### Windows
 
