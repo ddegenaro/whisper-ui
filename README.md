@@ -113,7 +113,7 @@ python --version
 
 #### Whisper-UI for Windows
 
-Download `Whisper UI.cmd` from this repository (or click the download link for Windows). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself.
+Download `Whisper UI.cmd` from this repository (or click the download link for Windows). Place it wherever you like on your computer. You can launch the program by running this file. Expect it to take a bit of time to start up the first time you run it as it installs itself. If you get a pop-up about security, click "More info" and then "Run anyway."
 
 ## Interface
 
