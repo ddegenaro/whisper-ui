@@ -50,14 +50,14 @@ if [ ! -d "$VENV_DIR" ]; then
     
     echo "Installing packages..."
     $PYTHON_NAME -m pip install uv
-    $PYTHON_NAME -m uv pip install whisper_ui==1.2.16
+    $PYTHON_NAME -m uv pip install --upgrade whisper_ui
     $PYTHON_NAME "$VENV_DIR/Lib/site-packages/whisper_ui/install_torch.py"
 else
     echo "Using existing virtual environment..."
     source "$VENV_DIR/bin/activate"
 
     echo "Checking for updates..."
-    $PYTHON_NAME -m uv pip install whisper_ui==1.2.16
+    $PYTHON_NAME -m uv pip install --upgrade whisper_ui
 fi
 
 echo "Starting Whisper-UI..."

@@ -5,6 +5,7 @@ from gc import collect
 
 import torch
 import whisper
+from huggingface_hub import errors
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 from pyannote.audio import Pipeline
 
@@ -179,11 +180,14 @@ class ModelInterface:
         self.get_model(switch_model=switch_model)
 
         if self.diarize_model is None:
-            print('Loading diarization model.')
-            self.diarize_model = Pipeline.from_pretrained(
-                "pyannote/speaker-diarization-3.1",
-                use_auth_token=USER_PREFS['hf_auth_token']
-            )
+            print('Loading diarization model...')
+            try:
+                self.diarize_model = Pipeline.from_pretrained(
+                    "pyannote/speaker-diarization-3.1",
+                    use_auth_token=USER_PREFS['hf_auth_token']
+                )
+            except errors.HfHubHTTPError:
+                print('Diariazation not available. Please go to https://huggingface.co/settings/tokens and create a "Read" token.')
             try:
                 self.diarize_model.to(DEVICE)
             except:

@@ -1,3 +1,5 @@
 openai-whisper==20250625
-tkinterdnd2==0.4.3
+pyannote.audio==3.3.2
+transformers==4.54.1
 numpy==2.2.6
+tkinterdnd2==0.4.3
