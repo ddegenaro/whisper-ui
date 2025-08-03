@@ -1,13 +1,12 @@
 import os
-import platform
 import re
 import json
+from gc import collect
 
-from torch import no_grad
-from torch import cuda
-from torch.backends import mps
+import torch
 import whisper
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
+from pyannote.audio import Pipeline
 
 from whisper_ui.handle_prefs import USER_PREFS, check_model
 
@@ -20,6 +19,14 @@ VALID_LANGUAGES = sorted(
 )
 LANGUAGES_FLIPPED = {v: k for k, v in LANGUAGES.items()}
 TO_LANGUAGE_CODE_FLIPPED = {v: k for k, v in TO_LANGUAGE_CODE.items()}
+SAMPLE_RATE = 16_000
+
+if torch.cuda.is_available():
+    DEVICE = torch.device('cuda')
+elif torch.backends.mps.is_available():
+    DEVICE = torch.device('mps')
+else:
+    DEVICE = torch.device('cpu')
 
 class ModelInterface:
 
@@ -28,6 +35,7 @@ class ModelInterface:
             self.model = 'abc'
         else:
             self.model = None
+        self.diarize_model = None
         
     def map_available_language_to_valid_language(self, available_language):
         
@@ -55,30 +63,21 @@ class ModelInterface:
             print(f'\tLoading model {model_name}. This may take a while if you have never used this model.')
             print(f'\t\tChecking for GPU...')
             
-            # check if mac
-            if platform.system() == 'Darwin':
-                # check if mps is available
-                if mps.is_available():
-                    device = 'mps'
-            else:
-                device = 'cuda' if cuda.is_available() else 'cpu'
-            if device == 'cuda' or device == 'mps':
+            if DEVICE == 'cuda' or DEVICE == 'mps':
                 print('\t\tGPU found.')
             else:
                 print('\t\tNo GPU found. Using CPU.')
             try:
-                self.model = whisper.load_model(name=USER_PREFS['model'], device=device, in_memory=True)
+                self.model = whisper.load_model(name=USER_PREFS['model'], in_memory=True)
             except:
-                try:
-                    self.model = whisper.load_model(name=USER_PREFS['model'], device=device)
-                except:
-                    print('\t\tWarning: issue loading model onto GPU. Using CPU.')
-                    self.model = whisper.load_model(name=USER_PREFS['model'], device='cpu')
+                self.model = whisper.load_model(name=USER_PREFS['model'])
+            try:
+                self.model.to(DEVICE)
+            except:
+                print(f'\t\tWarning: issue loading model onto device {DEVICE}. Using {self.model.device}.')
             print(f'\tLoaded model {model_name} successfully.')
         else:
             print(f'\tUsing currently loaded model ({model_name}).')
-            
-        self.model.eval()
 
     def format_outputs(self, outputs):
         
@@ -168,6 +167,8 @@ class ModelInterface:
             print(f'\t\tWrote JSON data to "{os.path.abspath(json_loc)}".')
 
     def transcribe(self, paths: list, switch_model: bool):
+
+        BATCH_SIZE = USER_PREFS['batch_size']
         
         if not paths:
             print('No matching files found.\n')
@@ -176,6 +177,19 @@ class ModelInterface:
         print(f'Beginning transcription of {len(paths)} audio file(s).')
 
         self.get_model(switch_model=switch_model)
+
+        if self.diarize_model is None:
+            print('Loading diarization model.')
+            self.diarize_model = Pipeline.from_pretrained(
+                "pyannote/speaker-diarization-3.1",
+                use_auth_token=USER_PREFS['hf_auth_token']
+            )
+            try:
+                self.diarize_model.to(DEVICE)
+            except:
+                print(f'\t\tWarning: issue loading diarization model onto device {DEVICE}. Using {self.model.device}.')
+        else:
+            print('Diarization model pre-loaded.')
         
         for i, path in enumerate(paths):
             
@@ -197,15 +211,55 @@ class ModelInterface:
                     open(os.path.join('test_outputs', 'example_output.json'), 'r', encoding='utf-8')
                 )
             else:
-                with no_grad():
-                    outputs = self.model.transcribe(
-                        whisper.load_audio(path),
-                        language = self.map_available_language_to_valid_language(USER_PREFS['language']),
-                        task = 'translate' if USER_PREFS['do_translate'] else 'transcribe'
+                
+                audio = whisper.load_audio(path)
+
+                with torch.no_grad():
+                    diarized_out = self.diarize_model(
+                        {
+                            'waveform': torch.tensor(audio).unsqueeze(0).to(DEVICE),
+                            'sample_rate': SAMPLE_RATE
+                        }
                     )
-            formatted_outputs = self.format_outputs(outputs)
-            self.write_outputs(outputs, formatted_outputs, fname)
-            print('\tDone.')
+                
+                torch.cuda.empty_cache()
+                collect()
+
+                audio_segs = [
+                    audio[round(seg.start * SAMPLE_RATE) : round(seg.end * SAMPLE_RATE + 1)]
+                    for seg in diarized_out.itersegments()
+                ]
+
+                print(f'\tFound {len(audio_segs)} segments. Transcribing segments...')
+
+                output_texts = []
+                output_langs = []
+
+                for batch_start in range(0, len(audio_segs), BATCH_SIZE):
+                    batch_end = min(batch_start + BATCH_SIZE, len(audio_segs))
+                    batch_segs = audio_segs[batch_start:batch_end]
+                    
+                    for i, audio_seg in enumerate(batch_segs):
+                        with torch.no_grad():
+                            model_outputs = self.model.transcribe(
+                                audio_seg,
+                                language = None,
+                                task = 'transcribe'
+                            )
+                        output_texts.append(model_outputs['text'])
+                        output_langs.append(model_outputs['language'])
+                    
+                    print(f'\tTranscribed batch {batch_start//BATCH_SIZE + 1}/{(len(audio_segs) + BATCH_SIZE - 1)//BATCH_SIZE} ({batch_end}/{len(audio_segs)} segments).')
+                    torch.cuda.empty_cache()
+                    collect()
+
+                formatted_outputs = [
+                    self.format_outputs(output_text, output_lang, seg)
+                    for output_text, output_lang, seg in zip(output_texts, )
+                ]
+                for formatted_output in formatted_outputs:
+                    self.write_outputs(outputs, formatted_output, fname)
+                print('\tDone.')
         
         print(f'Transcribed {len(paths)} files.\n')
 

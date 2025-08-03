@@ -12,5 +12,7 @@
     "do_text": true,
     "do_segmentation": true,
     "do_json": true,
+    "hf_auth_token": "",
+    "batch_size": 16,
     "DEBUG": false
 }

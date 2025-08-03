@@ -5,11 +5,14 @@ import glob
 import time
 from functools import partial
 import warnings
+
+import torch
 import tkinter as tk
 from tkinter import *
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, simpledialog
 from tkinter.scrolledtext import ScrolledText
 from tkinter.filedialog import askopenfilename, askdirectory
+
 from tkinterdnd2 import TkinterDnD, DND_ALL
 
 import whisper
@@ -375,6 +378,28 @@ def drop_file(event):
     app.glob_path_entry.delete(0, len(app.glob_path_entry.get()))
     app.glob_path_entry.insert(0, formatted_paths)
 
+def set_hf_auth_token():
+    user_input = simpledialog.askstring(
+        title = 'Set HuggingFace Access Token',
+        prompt = 'Enter your HuggingFace Access Token:'
+    )
+    if user_input is None:
+        return
+    set_option(
+        'hf_auth_token',
+        user_input.strip(),
+        False
+    )
+    print('HuggingFace access token set.')
+
+def check_for_gpu():
+    if torch.cuda.is_available():
+        print('Found a GPU: CUDA (Windows/Linux).')
+    elif torch.backends.mps.is_available():
+        print('Found a GPU: MPS (Mac).')
+    else:
+        print('No GPU found.')
+
 class PrintLogger(object):  # create file like object
 
     def __init__(self, textbox: ScrolledText):  # pass reference to text widget
@@ -446,12 +471,20 @@ class MainGUI(TkinterDnD.Tk):
         
         self.deps_menu = Menu(self.menu, tearoff=False)
         self.deps_menu.add_command(
+            label='Set HuggingFace Access Token',
+            command=set_hf_auth_token
+        )
+        self.deps_menu.add_command(
             label='Check for ffmpeg',
             command=check_ffmpeg
         )
         self.deps_menu.add_command(
             label='Install ffmpeg',
             command=ffmpeg_download
+        )
+        self.deps_menu.add_command(
+            label='Check for GPU',
+            command=check_for_gpu
         )
         
         self.menu.add_cascade(label='File', menu=self.file_menu)
