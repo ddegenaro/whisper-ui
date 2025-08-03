@@ -15,19 +15,25 @@ fi
 
 # Check for ffmpeg
 if ! command -v ffmpeg &>/dev/null; then
-    echo "ffmpeg not found. Please install FFmpeg, be sure to add it to your path, and try again."
+    echo "FFmpeg not found. Please install FFmpeg, be sure to add it to your path, and try again."
     read -p "Press any key to exit..."
     exit 1
+else
+    echo "FFmpeg found."
 fi
 
 # Setup directories
 VENV_DIR="$HOME/.whisper_ui/.venv"
 LOG_DIR="$HOME/.whisper_ui"
 LOG_FILE="$LOG_DIR/whisper_ui.log"
+TMP_DIR="$HOME/.whisper_ui/tmp"
 
-# Create directory if needed
+# Create directories if needed
 if [ ! -d "$LOG_DIR" ]; then
     mkdir -p "$LOG_DIR"
+fi
+if [ ! -d "$TMP_DIR" ]; then
+    mkdir -p "$TMP_DIR"
 fi
 
 # Check for virtual environment
@@ -44,13 +50,14 @@ if [ ! -d "$VENV_DIR" ]; then
     
     echo "Installing packages..."
     $PYTHON_NAME -m pip install uv
-    $PYTHON_NAME -m uv pip install --upgrade whisper_ui
+    $PYTHON_NAME -m uv pip install whisper_ui==1.2.16
+    $PYTHON_NAME "$VENV_DIR/Lib/site-packages/whisper_ui/install_torch.py"
 else
     echo "Using existing virtual environment..."
     source "$VENV_DIR/bin/activate"
 
     echo "Checking for updates..."
-    $PYTHON_NAME -m uv pip install --upgrade whisper_ui
+    $PYTHON_NAME -m uv pip install whisper_ui==1.2.16
 fi
 
 echo "Starting Whisper-UI..."

@@ -30,9 +30,11 @@ REM Setup directories
 set VENV_DIR=%USERPROFILE%\.whisper_ui\.venv
 set LOG_DIR=%USERPROFILE%\.whisper_ui
 set LOG_FILE=%LOG_DIR%\whisper_ui.log
+set TMP_DIR=%USERPROFILE%\.whisper_ui\tmp
 
-REM Create directory if needed
+REM Create directories if needed
 if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
+if not exist "%TMP_DIR%" mkdir "%TMP_DIR%"
 
 REM Check for virtual environment
 if not exist "%VENV_DIR%" (
@@ -48,13 +50,14 @@ if not exist "%VENV_DIR%" (
     
     echo Installing packages...
     %PYTHON_NAME% -m pip install uv
-    %PYTHON_NAME% -m uv pip install --upgrade whisper_ui
+    %PYTHON_NAME% -m uv pip install whisper_ui==1.2.16
+    %PYTHON_NAME% "%VENV_DIR%\Lib\site-packages\whisper_ui\install_torch.py"
 ) else (
     echo Using existing virtual environment...
     call "%VENV_DIR%\Scripts\activate"
 
     echo Checking for updates...
-    %PYTHON_NAME% -m uv pip install --upgrade whisper_ui
+    %PYTHON_NAME% -m uv pip install whisper_ui==1.2.16
 )
 
 echo Starting Whisper-UI...
