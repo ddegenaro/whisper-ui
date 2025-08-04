@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 # Package metadata
 NAME = 'whisper_ui'
-VERSION = '1.2.19'
+VERSION = '1.2.20'
 DESCRIPTION = 'A GUI for OpenAI\'s Whisper.'
 URL = 'https://github.com/ddegenaro/whisper-ui'
 AUTHOR = 'Dan DeGenaro'

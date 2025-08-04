@@ -406,11 +406,7 @@ class MainGUI(TkinterDnD.Tk):
         TkinterDnD.Tk.__init__(self)
         # window
 
-        pyproj_lines = open('../pyproject.toml', 'r', encoding='utf-8').readlines()
-        for line in pyproj_lines:
-            if line.startswith('version = '):
-                self.version = line[11:-1].replace('"', '').replace('\'', '')
-                break
+        self.version = '1.2.20'
 
         self.title(f"Whisper User Interface v.{self.version}")
         w = 896 # width for the Tk root
