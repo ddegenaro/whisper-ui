@@ -49,7 +49,7 @@ if not exist "%VENV_DIR%" (
     echo Installing packages...
     %PYTHON_NAME% -m pip install uv
     %PYTHON_NAME% -m uv pip install --upgrade whisper_ui
-    %PYTHON_NAME% "%VENV_DIR%\Lib\site-packages\whisper_ui\install_torch.py"
+    @REM %PYTHON_NAME% "%VENV_DIR%\Lib\site-packages\whisper_ui\install_torch.py"
 ) else (
     echo Using existing virtual environment...
     call "%VENV_DIR%\Scripts\activate"
