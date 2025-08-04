@@ -3,9 +3,7 @@ import platform
 import re
 import json
 
-from torch import no_grad
-from torch import cuda
-from torch.backends import mps
+import torch
 import whisper
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
@@ -20,6 +18,14 @@ VALID_LANGUAGES = sorted(
 )
 LANGUAGES_FLIPPED = {v: k for k, v in LANGUAGES.items()}
 TO_LANGUAGE_CODE_FLIPPED = {v: k for k, v in TO_LANGUAGE_CODE.items()}
+
+if torch.cuda.is_available():
+    DEVICE_NAME = 'cuda'
+elif torch.backends.mps.is_available():
+    DEVICE_NAME = 'mps'
+else:
+    DEVICE_NAME = 'cpu'
+DEVICE = torch.device(DEVICE_NAME)
 
 class ModelInterface:
 
@@ -55,25 +61,15 @@ class ModelInterface:
             print(f'\tLoading model {model_name}. This may take a while if you have never used this model.')
             print(f'\t\tChecking for GPU...')
             
-            # check if mac
-            if platform.system() == 'Darwin':
-                # check if mps is available
-                if mps.is_available():
-                    device = 'mps'
-            else:
-                device = 'cuda' if cuda.is_available() else 'cpu'
-            if device == 'cuda' or device == 'mps':
-                print('\t\tGPU found.')
+            if DEVICE_NAME == 'cuda' or DEVICE_NAME == 'mps':
+                print(f'\t\tGPU found ({DEVICE_NAME}).')
             else:
                 print('\t\tNo GPU found. Using CPU.')
             try:
-                self.model = whisper.load_model(name=USER_PREFS['model'], device=device, in_memory=True)
+                self.model = whisper.load_model(name=USER_PREFS['model'], device=DEVICE, in_memory=True)
             except:
-                try:
-                    self.model = whisper.load_model(name=USER_PREFS['model'], device=device)
-                except:
-                    print('\t\tWarning: issue loading model onto GPU. Using CPU.')
-                    self.model = whisper.load_model(name=USER_PREFS['model'], device='cpu')
+                print('\t\tWarning: issue loading model onto GPU. Using CPU.')
+                self.model = whisper.load_model(name=USER_PREFS['model'], in_memory=True)
             print(f'\tLoaded model {model_name} successfully.')
         else:
             print(f'\tUsing currently loaded model ({model_name}).')
@@ -197,11 +193,12 @@ class ModelInterface:
                     open(os.path.join('test_outputs', 'example_output.json'), 'r', encoding='utf-8')
                 )
             else:
-                with no_grad():
+                with torch.no_grad():
                     outputs = self.model.transcribe(
                         whisper.load_audio(path),
                         language = self.map_available_language_to_valid_language(USER_PREFS['language']),
-                        task = 'translate' if USER_PREFS['do_translate'] else 'transcribe'
+                        task = 'translate' if USER_PREFS['do_translate'] else 'transcribe',
+                        verbose=False
                     )
             formatted_outputs = self.format_outputs(outputs)
             self.write_outputs(outputs, formatted_outputs, fname)

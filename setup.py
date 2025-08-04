@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 # Package metadata
 NAME = 'whisper_ui'
-VERSION = '1.2.16'
+VERSION = '1.2.17'
 DESCRIPTION = 'A GUI for OpenAI\'s Whisper.'
 URL = 'https://github.com/ddegenaro/whisper-ui'
 AUTHOR = 'Dan DeGenaro'
@@ -17,9 +17,7 @@ with open('README.md', 'r') as f:
 # Define dependencies
 INSTALL_REQUIRES = [
     'openai-whisper',
-    'tkinterdnd2',
-    'torch==2.6.0',
-    'numpy==2.1.2'
+    'tkinterdnd2'
     # Add other dependencies here
 ]
 

@@ -21,9 +21,7 @@ where ffmpeg -version >nul 2>&1
 if %ERRORLEVEL%==0 (
     echo FFmpeg found.
 ) else (
-    echo FFmpeg not found. Please install FFmpeg, be sure to add it to your path, and try again.
-    pause
-    exit /b 1
+    echo FFmpeg not found. Please install FFmpeg and be sure to add it to your path.
 )
 
 REM Setup directories

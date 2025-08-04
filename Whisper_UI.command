@@ -15,9 +15,7 @@ fi
 
 # Check for ffmpeg
 if ! command -v ffmpeg &>/dev/null; then
-    echo "ffmpeg not found. Please install FFmpeg, be sure to add it to your path, and try again."
-    read -p "Press any key to exit..."
-    exit 1
+    echo "ffmpeg not found. Please install FFmpeg and be sure to add it to your path."
 fi
 
 # Setup directories
