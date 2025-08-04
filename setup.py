@@ -2,7 +2,11 @@ from setuptools import setup, find_packages
 
 # Package metadata
 NAME = 'whisper_ui'
-VERSION = '1.2.17'
+pyproj_lines = open('pyproject.toml', 'r', encoding='utf-8').readlines()
+for line in pyproj_lines:
+    if line.startswith('version = '):
+        VERSION = line[11:-1].replace('"', '').replace('\'', '')
+        break
 DESCRIPTION = 'A GUI for OpenAI\'s Whisper.'
 URL = 'https://github.com/ddegenaro/whisper-ui'
 AUTHOR = 'Dan DeGenaro'

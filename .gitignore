@@ -5,3 +5,4 @@ dist/
 whisper_ui/test.py
 whisper_ui/faster_whisper_funcs.py
 .vs/
+notes_to_self.txt

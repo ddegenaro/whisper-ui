@@ -1,5 +1,4 @@
 import os
-import platform
 import re
 import json
 
@@ -166,7 +165,11 @@ class ModelInterface:
     def transcribe(self, paths: list, switch_model: bool):
         
         if not paths:
-            print('No matching files found.\n')
+            print('No matching files found. Canceling.\n')
+            return
+        
+        if not os.path.exists(USER_PREFS['output_dir']):
+            print(f'Output directory {USER_PREFS["output_dir"]} does not exist. Canceling.\n')
             return
         
         print(f'Beginning transcription of {len(paths)} audio file(s).')
