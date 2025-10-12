@@ -9,3 +9,4 @@ whisper_ui/faster_whisper_funcs.py
 notes_to_self.txt
 scratch.ipynb
 *tempCodeRunner*
+.DS_Store
