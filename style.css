@@ -47,3 +47,7 @@ body {
 .download-link:hover {
     background-color: #0056b3;
 }
+
+.unsubscribe-link {
+    padding-top: 20px;
+}
