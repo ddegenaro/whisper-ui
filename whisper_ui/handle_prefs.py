@@ -1,7 +1,9 @@
 import os
 import json
+from pathlib import Path
 
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
+from faster_whisper.utils import _MODELS
 
 USER_PREFS = json.load(
     open(
@@ -16,12 +18,14 @@ AVAILABLE_LANGUAGES = ['None'] + sorted(list(set(
     [x.title() for x in TO_LANGUAGE_CODE.keys()]
 )))
 
-default = os.path.join(os.path.expanduser("~"), ".cache")
-download_root = os.path.join(os.getenv("XDG_CACHE_HOME", default), "whisper")
-    
 def check_model(model_name):
-    os.makedirs(download_root, exist_ok=True)
-    return model_name + '.pt' in os.listdir(download_root)
+    path = os.path.join(
+        Path(os.getenv('HF_HOME', Path.home() / '.cache' / 'huggingface')) / 'hub',
+        'models--' + _MODELS[model_name].replace(os.path.sep, '--')
+    )
+    return os.path.exists(
+        path
+    )
 
 def check_warn(pref_name: str, template_name: str, content: str):
     pref_name += '_insertion_symbol'

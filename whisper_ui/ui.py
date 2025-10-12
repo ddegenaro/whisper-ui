@@ -3,6 +3,7 @@ import sys
 import re
 import glob
 import time
+import threading
 from functools import partial
 import warnings
 import tkinter as tk
@@ -12,7 +13,13 @@ from tkinter.scrolledtext import ScrolledText
 from tkinter.filedialog import askopenfilename, askdirectory
 from tkinterdnd2 import TkinterDnD, DND_ALL
 
-import whisper
+import ssl
+import certifi
+os.environ['SSL_CERT_FILE'] = certifi.where()
+os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
+ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
+
+import faster_whisper
 
 from whisper_ui.whisper_funcs import AVAILABLE_MODELS, ModelInterface
 from whisper_ui.handle_prefs import set_option, check_model, USER_PREFS, AVAILABLE_LANGUAGES
@@ -25,6 +32,7 @@ warnings.filterwarnings('ignore')
 app = None
 mi = None
 switch_model = False
+TABS = 2
 
 WINDOWS_FFMPEG_LINK = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-lgpl.zip'
 LINUX_FFMPEG_LINK = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl.tar.xz'
@@ -235,10 +243,23 @@ def toggle_json():
     app.json_var.set(not USER_PREFS['do_json'])
     set_option('do_json', not USER_PREFS['do_json'])
 
+def toggle_gpu():
+    global app
+    global mi
+    app.gpu_var.set(not USER_PREFS['use_gpu'])
+    set_option('use_gpu', not USER_PREFS['use_gpu'])
+    if mi is not None:
+        mi.update_device(True)
+
 def toggle_translate():
     global app
     app.translate_var.set(not USER_PREFS['do_translate'])
     set_option('do_translate', not USER_PREFS['do_translate'])
+
+def toggle_use_textgrid():
+    global app
+    app.textgrid_var.set(not USER_PREFS['use_textgrid'])
+    set_option('use_textgrid', not USER_PREFS['use_textgrid'])
 
 def file_choose_wrapper():
     global app
@@ -260,15 +281,29 @@ def output_dir_choose_wrapper():
         0,
         os.path.normpath(askdirectory())
     )
+    set_output_dir_wrapper()
     
 def paths_wrapper():
     print(f'Clicking "Transcribe" will process:')
     if ';' in app.glob_path_entry.get():
-        for path in app.glob_path_entry.get().split(';'):
-            print(f'\t{os.path.normpath(path)}')
+        paths = app.glob_path_entry.get().split(';')
     else:
-        for path in glob.glob(app.glob_path_entry.get()):
+        paths = glob.glob(app.glob_path_entry.get())
+
+    if USER_PREFS['use_textgrid']:
+        for path in paths:
             print(f'\t{os.path.normpath(path)}')
+            path_no_ext = os.path.splitext(path)[0]
+            if os.path.exists(path_no_ext + '.TextGrid'):
+                pass
+            elif os.path.exists(path_no_ext + '.textgrid'):
+                pass
+            else:
+                print(f'\tWarning: Could not find a matching textgrid file.')
+    else:
+        for path in paths:
+            print(f'\t{os.path.normpath(path)}')
+
     print()
 
 def transcribe_wrapper():
@@ -318,6 +353,9 @@ def language_select_wrapper(event):
         print(f'Assuming language "{new_value}."\n')
     
 def download_model(model_name):
+    global TABS
+    global app
+    TABS = 0
     if not check_model(model_name):
         result = messagebox.askokcancel(
             'Confirm model download',
@@ -325,19 +363,30 @@ def download_model(model_name):
         )
         if result:
             print(f'Downloading model {model_name}...')
-            try:
-                whisper.load_model(name=model_name)
-            except:
-                import ssl
-                ssl._create_default_https_context = ssl._create_unverified_context
-                whisper.load_model(name=model_name)
-            print(f'Downloaded model {model_name} successfully. Reloading window...\n')
-            time.sleep(1)
-            reload()
+            
+            # Define the download function to run in thread
+            def do_download():
+                try:
+                    faster_whisper.download_model(model_name)
+                    print(f'Downloaded model {model_name} successfully. Reloading window...\n')
+                    time.sleep(1)
+                    # Use after() to safely call reload from main thread
+                    app.root.after(0, reload)  # assuming 'root' is your Tk root window
+                except Exception as e:
+                    print(f'Error downloading model: {e}\n')
+                finally:
+                    global TABS
+                    TABS = 2
+            
+            # Start download in background thread
+            thread = threading.Thread(target=do_download, daemon=True)
+            thread.start()
         else:
             print(f'Download canceled.\n')
+            TABS = 2
     else:
         print(f'Model {model_name} already downloaded.\n')
+        TABS = 2
 
 def reload():
     global app
@@ -382,13 +431,22 @@ class PrintLogger(object):  # create file like object
         self.textbox.configure(state="disabled")
 
     def write(self, text):
-        self.textbox.configure(state="normal")  # make field editable
-        self.textbox.insert("end", text)  # write text to textbox
-        if '%' in text:
-            self.textbox.insert("end", '\n')
-        self.textbox.see("end")  # scroll to end
-        self.textbox.configure(state="disabled")  # make field readonly
-        self.textbox.update_idletasks()
+        global TABS
+        if not text:  # Skip empty strings
+            return
+            
+        self.textbox.configure(state="normal")
+
+        if '\r' in text:
+            # Handle carriage return - delete current line and replace
+            self.textbox.delete("end-1c linestart", "end-1c")
+            # Remove the \r from the text before inserting
+            text = '\t' * TABS + text.replace('\r', '')
+        
+        self.textbox.insert("end", text)
+        self.textbox.see("end")
+        self.textbox.configure(state="disabled")
+        self.textbox.update()
         
     def clear(self):
         self.textbox.configure(state='normal')
@@ -396,8 +454,11 @@ class PrintLogger(object):  # create file like object
         self.textbox.configure(state='disabled')
 
     def flush(self):  # needed for file like object
-        pass
+        self.textbox.update()
 
+    def isatty(self):  # ADD THIS METHOD
+        return True
+    
 
 
 class MainGUI(TkinterDnD.Tk):
@@ -409,8 +470,8 @@ class MainGUI(TkinterDnD.Tk):
         self.version = '1.2.20'
 
         self.title(f"Whisper User Interface v.{self.version}")
-        w = 896 # width for the Tk root
-        h = 504 # height for the Tk root
+        w = 1067 # width for the Tk root
+        h = 600 # height for the Tk root
         # get screen width and height
         ws = self.winfo_screenwidth() # width of the screen
         hs = self.winfo_screenheight() # height of the screen
@@ -584,6 +645,26 @@ class MainGUI(TkinterDnD.Tk):
         if USER_PREFS['do_json']:
             self.json_var.set(True)
             self.do_json_tickbox.select()
+        self.gpu_var = BooleanVar()
+        self.use_gpu_tickbox = Checkbutton(
+            self.output_options_frame,
+            variable=self.gpu_var,
+            text = "Use GPU?",
+            command = toggle_gpu
+        )
+        if USER_PREFS['use_gpu']:
+            self.gpu_var.set(True)
+            self.use_gpu_tickbox.select()
+        self.textgrid_var = BooleanVar()
+        self.use_textgrid_tickbox = Checkbutton(
+            self.output_options_frame,
+            variable=self.textgrid_var,
+            text = "Use TextGrid?",
+            command = toggle_use_textgrid
+        )
+        if USER_PREFS['use_textgrid']:
+            self.textgrid_var.set(True)
+            self.use_textgrid_tickbox.select()
         self.template_options_button = Button(
             self.output_options_frame,
             text = "Template formatting options...",
@@ -594,6 +675,8 @@ class MainGUI(TkinterDnD.Tk):
         self.do_txt_tickbox.pack(side=LEFT, padx=4)
         self.do_seg_tickbox.pack(side=LEFT, padx=4)
         self.do_json_tickbox.pack(side=LEFT, padx=4)
+        self.use_gpu_tickbox.pack(side=LEFT, padx=4)
+        self.use_textgrid_tickbox.pack(side=LEFT, padx=4)
         self.template_options_button.pack(side=LEFT, padx=4)
         
         

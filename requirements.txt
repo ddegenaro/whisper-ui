@@ -1,2 +1,4 @@
+certifi
 openai-whisper
 tkinterdnd2
+faster-whisper

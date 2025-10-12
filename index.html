@@ -14,6 +14,23 @@
         <a href="Whisper_UI.command" download="Whisper_UI.command" class="download-link">Download for Mac</a>
     </div>
 
+    <div class="email-signup">
+        <h2>Stay Updated</h2>
+        <p>Get notified about new features and updates!</p>
+        <form class="email-form" id="emailForm">
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="your@email.com" 
+                required
+            >
+            <button type="submit">Subscribe</button>
+        </form>
+        <a class="unsubscribe-link" onclick="unsubscribe()">Unsubscribe</a>
+        <div id="formMessage" class="form-message"></div>
+    </div>
+
     <div class="readme" id="readme-container">
         <script>
             fetch('README.html')
@@ -24,5 +41,58 @@
                 .catch(error => console.error('Error loading README:', error));
         </script>
     </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyQFMyYwxFeJaAUuok1gOJ9IXSJUpiu0jv5_Oicz77T5smhRrVQFtKv38CaVgLUgb1kNA/exec';
+        
+        const form = document.getElementById('emailForm');
+        const messageDiv = document.getElementById('formMessage');
+        
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            const submitBtn = form.querySelector('button');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Subscribing...';
+            
+            fetch(scriptURL, {
+                method: 'POST',
+                body: new FormData(form)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showMessage(data.message, 'success');
+                form.reset();
+            })
+            .catch(error => {
+                showMessage('Error: Could not subscribe. Please try again.', 'error');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Subscribe';
+            });
+        });
+        
+        function unsubscribe() {
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                showMessage('Please enter your email address to unsubscribe.', 'error');
+                return;
+            }
+            
+            const mailtoLink = 'mailto:drd92@georgetown.edu?subject=Whisper%20UI%20-%20Unsubscribe&body=Whisper%20UI%20-%20Unsubscribe';
+            window.location.href = mailtoLink;
+        }
+        
+        function showMessage(msg, type) {
+            messageDiv.textContent = msg;
+            messageDiv.className = `form-message ${type} show`;
+            
+            setTimeout(() => {
+                messageDiv.className = 'form-message';
+            }, 5000);
+        }
+    </script>
 </body>
 </html>

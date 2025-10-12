@@ -3,13 +3,17 @@ import re
 import json
 
 import torch
-import whisper
+import faster_whisper
+from faster_whisper import WhisperModel
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
 from whisper_ui.handle_prefs import USER_PREFS, check_model
+from whisper_ui.textgrid_utils import get_clip_timestamps
 
 SUPPORTED_FILETYPES = ('flac', 'm4a', 'mp3', 'mp4', 'wav')
-AVAILABLE_MODELS = whisper.available_models()
+
+AVAILABLE_MODELS = faster_whisper.available_models()
+
 VALID_LANGUAGES = sorted(
     LANGUAGES.keys()
 ) + sorted(
@@ -18,13 +22,25 @@ VALID_LANGUAGES = sorted(
 LANGUAGES_FLIPPED = {v: k for k, v in LANGUAGES.items()}
 TO_LANGUAGE_CODE_FLIPPED = {v: k for k, v in TO_LANGUAGE_CODE.items()}
 
-if torch.cuda.is_available():
-    DEVICE_NAME = 'cuda'
-elif torch.backends.mps.is_available():
-    DEVICE_NAME = 'mps'
-else:
-    DEVICE_NAME = 'cpu'
-DEVICE = torch.device(DEVICE_NAME)
+EX_KEYS = {
+    'output_dir',
+    'model',
+    'language',
+    'do_translate',
+    'text_template',
+    'segmentation_template',
+    'text_insertion_symbol',
+    'segment_insertion_symbol',
+    'start_time_insertion_symbol',
+    'end_time_insertion_symbol',
+    'do_text',
+    'do_segmentation',
+    'do_json',
+    'DEBUG',
+    'use_gpu',
+    'use_textgrid',
+    'clip_timestamps'
+}
 
 class ModelInterface:
 
@@ -33,6 +49,20 @@ class ModelInterface:
             self.model = 'abc'
         else:
             self.model = None
+        self.device = None
+        self.device_name = None
+        self.update_device(True)
+
+    def update_device(self, log: bool = False):
+        if torch.cuda.is_available() and USER_PREFS['use_gpu']:
+            self.device_name = 'cuda'
+        elif torch.backends.mps.is_available() and USER_PREFS['use_gpu']:
+            self.device_name = 'mps'
+        else:
+            self.device_name = 'cpu'
+        self.device = torch.device(self.device_name)
+        if log:
+            print(f'Device set to {self.device_name}.')
         
     def map_available_language_to_valid_language(self, available_language):
         
@@ -53,60 +83,57 @@ class ModelInterface:
         model_name = USER_PREFS["model"]
         
         if not check_model(model_name):
-            print(f'\tWarning: model {model_name} not found in cache. Please download it.')
+            msg = f'\tError: "model" is set to "{model_name}" which has not been downloaded.\n'
+            msg += '\tYou must navigate to "Download models" and download this model first.'
+            print(msg)
+            model_name = None
             return
         
         if self.model is None or switch_model:
             print(f'\tLoading model {model_name}. This may take a while if you have never used this model.')
-            print(f'\t\tChecking for GPU...')
             
-            if DEVICE_NAME == 'cuda' or DEVICE_NAME == 'mps':
-                print(f'\t\tGPU found ({DEVICE_NAME}).')
-            else:
-                print('\t\tNo GPU found. Using CPU.')
             try:
-                self.model = whisper.load_model(name=USER_PREFS['model'], device=DEVICE, in_memory=True)
+                self.model = WhisperModel(model_size_or_path=USER_PREFS['model'])
             except:
                 print('\t\tWarning: issue loading model onto GPU. Using CPU.')
-                self.model = whisper.load_model(name=USER_PREFS['model'], in_memory=True)
+                self.model = WhisperModel(model_size_or_path=USER_PREFS['model'], device='cpu')
             print(f'\tLoaded model {model_name} successfully.')
         else:
             print(f'\tUsing currently loaded model ({model_name}).')
-            
-        self.model.eval()
 
-    def format_outputs(self, outputs):
+    def format_outputs(self, segments):
         
         text_template = USER_PREFS['text_template']
         segmentation_template = USER_PREFS['segmentation_template']
         
         text_template_filled = None
         segmentation_lines = None
+
+        full_text = ''
+
+        text_is = USER_PREFS['segment_insertion_symbol']
+        start_is = USER_PREFS['start_time_insertion_symbol']
+        end_is = USER_PREFS['end_time_insertion_symbol']
         
-        if USER_PREFS['do_text']:
-            text_is = USER_PREFS['text_insertion_symbol']
-            text_template_filled = text_template.replace(
-                text_is, outputs['text']
+        segmentation_lines = []
+        for segment in segments:
+            full_text += segment.text
+            text = segment.text.strip()
+            start = str(segment.start)
+            end = str(segment.end)
+            seg_template_filled = segmentation_template.replace(
+                text_is, text
+            ).replace(
+                start_is, start
+            ).replace(
+                end_is, end
             )
-        
-        if USER_PREFS['do_segmentation']:
-            text_is = USER_PREFS['segment_insertion_symbol']
-            start_is = USER_PREFS['start_time_insertion_symbol']
-            end_is = USER_PREFS['end_time_insertion_symbol']
-            
-            segmentation_lines = []
-            for segment in outputs['segments']:
-                text = segment['text']
-                start = str(segment['start'])
-                end = str(segment['end'])
-                seg_template_filled = segmentation_template.replace(
-                    text_is, text
-                ).replace(
-                    start_is, start
-                ).replace(
-                    end_is, end
-                )
-                segmentation_lines.append(seg_template_filled)
+            segmentation_lines.append(seg_template_filled)
+
+        text_is = USER_PREFS['text_insertion_symbol']
+        text_template_filled = text_template.replace(
+            text_is, full_text
+        )
                 
         return {
             'text': text_template_filled,
@@ -175,6 +202,9 @@ class ModelInterface:
         print(f'Beginning transcription of {len(paths)} audio file(s).')
 
         self.get_model(switch_model=switch_model)
+
+        if self.model is None:
+            return
         
         for i, path in enumerate(paths):
             
@@ -195,15 +225,52 @@ class ModelInterface:
                 outputs = json.load(
                     open(os.path.join('test_outputs', 'example_output.json'), 'r', encoding='utf-8')
                 )
+                formatted_outputs = {}
             else:
-                with torch.no_grad():
-                    outputs = self.model.transcribe(
-                        whisper.load_audio(path),
-                        language = self.map_available_language_to_valid_language(USER_PREFS['language']),
-                        task = 'translate' if USER_PREFS['do_translate'] else 'transcribe',
-                        verbose=False
-                    )
-            formatted_outputs = self.format_outputs(outputs)
+                kwargs = {
+                        k: v for k, v in USER_PREFS.items()
+                    }
+                for ex_key in EX_KEYS:
+                    del kwargs[ex_key]
+
+                clip_timestamps = '0'
+                if USER_PREFS['use_textgrid']:
+                    path_no_ext = os.path.splitext(path)[0]
+                    try:
+                        clip_timestamps = get_clip_timestamps(
+                            path_no_ext + '.TextGrid'
+                        )
+                    except:
+                        try:
+                            clip_timestamps = get_clip_timestamps(
+                                path_no_ext + '.textgrid'
+                            )
+                        except:
+                            print(f'\tWarning: Could not find a matching textgrid file.')
+                
+                segments, info = self.model.transcribe(
+                    path,
+                    language = self.map_available_language_to_valid_language(USER_PREFS['language']),
+                    task = 'translate' if USER_PREFS['do_translate'] else 'transcribe',
+                    clip_timestamps = clip_timestamps,
+                    log_progress=True,
+                    **kwargs
+                )
+                formatted_outputs = self.format_outputs(segments)
+                outputs = {}
+                for attr in dir(info):
+                    if attr.startswith('__'):
+                        continue
+                    elif attr == 'transcription_options':
+                        sub_dict = {}
+                        transcription_options = info.__getattribute__(attr)
+                        for sub_attr in dir(transcription_options):
+                            if sub_attr.startswith('__'):
+                                continue
+                            sub_dict[sub_attr] = transcription_options.__getattribute__(sub_attr)
+                        outputs[attr] = sub_dict
+                    else:
+                        outputs[attr] = info.__getattribute__(attr)
             self.write_outputs(outputs, formatted_outputs, fname)
             print('\tDone.')
         

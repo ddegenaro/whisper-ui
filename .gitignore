@@ -1,8 +1,11 @@
 __pycache__/
 test_audio/
 test_outputs/
+test_textgrids/
 dist/
 whisper_ui/test.py
 whisper_ui/faster_whisper_funcs.py
 .vs/
 notes_to_self.txt
+scratch.ipynb
+*tempCodeRunner*
