@@ -18,6 +18,7 @@ jobs:
         with:
           args: >-
             --standalone
+            --include-in-header=copy-buttons.html
             --output=README.html
             README.md
 
