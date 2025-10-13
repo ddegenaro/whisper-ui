@@ -295,9 +295,9 @@ def paths_wrapper():
             print(f'\t{os.path.normpath(path)}')
             path_no_ext = os.path.splitext(path)[0]
             if os.path.exists(path_no_ext + '.TextGrid'):
-                pass
+                print(f'\t{os.path.normpath(path_no_ext + '.TextGrid')}')
             elif os.path.exists(path_no_ext + '.textgrid'):
-                pass
+                print(f'\t{os.path.normpath(path_no_ext + '.textgrid')}')
             else:
                 print(f'\tWarning: Could not find a matching textgrid file.')
     else:

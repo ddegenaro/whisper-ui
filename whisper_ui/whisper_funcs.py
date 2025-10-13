@@ -8,7 +8,7 @@ from faster_whisper import WhisperModel
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
 from whisper_ui.handle_prefs import USER_PREFS, check_model
-from whisper_ui.textgrid_utils import get_clip_timestamps
+from whisper_ui.textgrid_utils import get_clip_timestamps, write_textgrid
 
 SUPPORTED_FILETYPES = ('flac', 'm4a', 'mp3', 'mp4', 'wav')
 
@@ -110,6 +110,7 @@ class ModelInterface:
         segmentation_lines = None
 
         full_text = ''
+        segment_texts = []
 
         text_is = USER_PREFS['segment_insertion_symbol']
         start_is = USER_PREFS['start_time_insertion_symbol']
@@ -119,6 +120,7 @@ class ModelInterface:
         for segment in segments:
             full_text += segment.text
             text = segment.text.strip()
+            segment_texts.append(text)
             start = str(segment.start)
             end = str(segment.end)
             seg_template_filled = segmentation_template.replace(
@@ -137,7 +139,8 @@ class ModelInterface:
                 
         return {
             'text': text_template_filled,
-            'segmentation_lines': segmentation_lines
+            'segmentation_lines': segmentation_lines,
+            'segment_texts': segment_texts
         }
 
     def make_paths(self, output_dir, fname):
@@ -234,17 +237,16 @@ class ModelInterface:
                     del kwargs[ex_key]
 
                 clip_timestamps = '0'
+                textgrid_path = None
                 if USER_PREFS['use_textgrid']:
                     path_no_ext = os.path.splitext(path)[0]
                     try:
-                        clip_timestamps = get_clip_timestamps(
-                            path_no_ext + '.TextGrid'
-                        )
+                        textgrid_path = path_no_ext + '.TextGrid'
+                        clip_timestamps = get_clip_timestamps(textgrid_path)
                     except:
                         try:
-                            clip_timestamps = get_clip_timestamps(
-                                path_no_ext + '.textgrid'
-                            )
+                            textgrid_path = path_no_ext + '.textgrid'
+                            clip_timestamps = get_clip_timestamps(textgrid_path)
                         except:
                             print(f'\tWarning: Could not find a matching textgrid file.')
                 
@@ -271,6 +273,8 @@ class ModelInterface:
                         outputs[attr] = sub_dict
                     else:
                         outputs[attr] = info.__getattribute__(attr)
+                if textgrid_path is not None:
+                    write_textgrid(textgrid_path, formatted_outputs['segment_texts'])
             self.write_outputs(outputs, formatted_outputs, fname)
             print('\tDone.')
         

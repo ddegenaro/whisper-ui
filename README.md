@@ -186,7 +186,7 @@ Check "Translate to English?" if you would like the transcript of your non-Engli
 
 Check "Use GPU?" if you would like to use hardware acceleration. This may be faster on a Windows or Linux machine with an NVIDIA GPU. For Macs, many things are not implemented on MPS (Mac GPU), so this probably won't work.
 
-#### Using TextGrid
+#### Using TextGrids
 
 You can check this button to supply time alignments from a textgrid. WhisperUI assumes that your textgrid file is named identically to its corresponding audio file, except for the extension. For example, having both of the following files in your Downloads folder would work:
 
