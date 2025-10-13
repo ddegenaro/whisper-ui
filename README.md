@@ -195,6 +195,16 @@ You can check this button to supply time alignments from a textgrid. WhisperUI a
 - my_audio_file.textgrid
 ```
 
+Supplying this information will yield the following:
+
+```bash
+- my_audio_file.wav
+- my_audio_file.textgrid
+- my_audio_file_blank.textgrid
+```
+
+Where `my_audio_file.textgrid` now contains words filled in for each silence. `my_audio_file_blank.textgrid` is the original textgrid with `'silent'` still written instead of words.
+
 ## Future updates
 
 I plan to expand this project in the future to allow access to a curated collection of ASR models from HuggingFace, but this will take some time. [Other models on HF can be found here.](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard)
