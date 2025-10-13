@@ -1,26 +1,24 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: #f4f4f4;
     text-align: center;
-    max-width: none !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-    padding: 20px !important;
-    background-color: #f4f4f4 !important; /* Match the main background */
+    width: 100%;
     box-sizing: border-box;
 }
+
 .readme {
     text-align: left;
-    width: 100% !important;
+    width: 100%;
     margin-top: 20px;
     background-color: #f4f4f4;
     font-family: Arial, sans-serif;
 }
+
 .container {
     display: flex;
     justify-content: center;
@@ -28,6 +26,7 @@ body {
     margin-top: 20px;
     flex-wrap: wrap;
 }
+
 .download-link {
     display: flex;
     justify-content: center;
@@ -44,10 +43,69 @@ body {
     text-align: center;
     transition: background 0.3s ease-in-out;
 }
+
 .download-link:hover {
     background-color: #0056b3;
 }
 
-.unsubscribe-link {
-    padding-top: 20px;
+.email-form {
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.email-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.email-input-row input[type="email"] {
+    padding: 8px 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.subscribe-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.3s ease-in-out;
+}
+
+.subscribe-button:hover {
+    background-color: #0056b3;
+}
+
+.unsubscribe-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.unsubscribe-button:hover {
+    background-color: #0056b3;
 }

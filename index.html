@@ -18,16 +18,18 @@
         <h2>Stay Updated</h2>
         <p>Get notified about new features and updates!</p>
         <form class="email-form" id="emailForm">
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                placeholder="your@email.com" 
-                required
-            >
-            <button type="submit">Subscribe</button>
+            <div class="email-input-row">
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="your@email.com" 
+                    required
+                >
+                <button type="submit" class="subscribe-button">Subscribe</button>
+            </div>
         </form>
-        <a class="unsubscribe-link" onclick="unsubscribe()">Unsubscribe</a>
+        <button class="unsubscribe-button" onclick="unsubscribe()">Unsubscribe</a>
         <div id="formMessage" class="form-message"></div>
     </div>
 

@@ -184,8 +184,19 @@ The three checkboxes below the second textbox allow you to control which kinds o
 
 Check "Translate to English?" if you would like the transcript of your non-English audio to be output in English. Note that Whisper will generally struggle to translate from low-resource languages.
 
+Check "Use GPU?" if you would like to use hardware acceleration. This may be faster on a Windows or Linux machine with an NVIDIA GPU. For Macs, many things are not implemented on MPS (Mac GPU), so this probably won't work.
+
+#### Using TextGrid
+
+You can check this button to supply time alignments from a textgrid. WhisperUI assumes that your textgrid file is named identically to its corresponding audio file, except for the extension. For example, having both of the following files in your Downloads folder would work:
+
+```bash
+- my_audio_file.wav
+- my_audio_file.textgrid
+```
+
 ## Future updates
 
-I plan to expand this project in the future to allow access to a curated collection of ASR models from HuggingFace, but this will take some time. [Other models on HF under consideration include WhisperX and some NVIDIA speech models like Canary and Parakeet.](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard)
+I plan to expand this project in the future to allow access to a curated collection of ASR models from HuggingFace, but this will take some time. [Other models on HF can be found here.](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard)
 
 I encourage feedback and suggestions for improvement. Please feel free to open an issue on [the Issues page](https://github.com/dan-the-meme-man/whisper-ui/issues) if you have any ideas or problems, or send me an email at [drd92@georgetown.edu](mailto:drd92@georgetown.edu).
