@@ -477,13 +477,24 @@ that Whisper will generally struggle with low-resource languages.</p>
 <p>Check “Translate to English?” if you would like the transcript of
 your non-English audio to be output in English. Note that Whisper will
 generally struggle to translate from low-resource languages.</p>
+<p>Check “Use GPU?” if you would like to use hardware acceleration. This
+may be faster on a Windows or Linux machine with an NVIDIA GPU. For
+Macs, many things are not implemented on MPS (Mac GPU), so this probably
+won’t work.</p>
+<h4 id="using-textgrid">Using TextGrid</h4>
+<p>You can check this button to supply time alignments from a textgrid.
+WhisperUI assumes that your textgrid file is named identically to its
+corresponding audio file, except for the extension. For example, having
+both of the following files in your Downloads folder would work:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> my_audio_file.wav</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> my_audio_file.textgrid</span></code></pre></div>
 <h2 id="future-updates">Future updates</h2>
 <p>I plan to expand this project in the future to allow access to a
 curated collection of ASR models from HuggingFace, but this will take
 some time. <a
 href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">Other
-models on HF under consideration include WhisperX and some NVIDIA speech
-models like Canary and Parakeet.</a></p>
+models on HF can be found here.</a></p>
 <p>I encourage feedback and suggestions for improvement. Please feel
 free to open an issue on <a
 href="https://github.com/dan-the-meme-man/whisper-ui/issues">the Issues
