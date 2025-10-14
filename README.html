@@ -567,7 +567,7 @@ generally struggle to translate from low-resource languages.</p>
 may be faster on a Windows or Linux machine with an NVIDIA GPU. For
 Macs, many things are not implemented on MPS (Mac GPU), so this probably
 won’t work.</p>
-<h4 id="using-textgrid">Using TextGrid</h4>
+<h4 id="using-textgrids">Using TextGrids</h4>
 <p>You can check this button to supply time alignments from a textgrid.
 WhisperUI assumes that your textgrid file is named identically to its
 corresponding audio file, except for the extension. For example, having
@@ -575,6 +575,15 @@ both of the following files in your Downloads folder would work:</p>
 <div class="sourceCode" id="cb12"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> my_audio_file.wav</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> my_audio_file.textgrid</span></code></pre></div>
+<p>Supplying this information will yield the following:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> my_audio_file.wav</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> my_audio_file.textgrid</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> my_audio_file_blank.textgrid</span></code></pre></div>
+<p>Where <code>my_audio_file.textgrid</code> now contains words filled
+in for each silence. <code>my_audio_file_blank.textgrid</code> is the
+original textgrid with <code>'silent'</code> still written instead of
+words.</p>
 <h2 id="future-updates">Future updates</h2>
 <p>I plan to expand this project in the future to allow access to a
 curated collection of ASR models from HuggingFace, but this will take
