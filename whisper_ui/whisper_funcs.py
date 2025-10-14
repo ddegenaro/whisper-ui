@@ -4,11 +4,11 @@ import json
 
 import torch
 import faster_whisper
-from faster_whisper import WhisperModel
+from faster_whisper import WhisperModel, BatchedInferencePipeline
 from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 
 from whisper_ui.handle_prefs import USER_PREFS, check_model
-from whisper_ui.textgrid_utils import get_clip_timestamps, write_textgrid
+from whisper_ui.textgrid_utils import get_clip_timestamps, write_textgrid_fill_utterances
 
 SUPPORTED_FILETYPES = ('flac', 'm4a', 'mp3', 'mp4', 'wav')
 
@@ -39,7 +39,8 @@ EX_KEYS = {
     'DEBUG',
     'use_gpu',
     'use_textgrid',
-    'clip_timestamps'
+    'clip_timestamps',
+    'vad_filter'
 }
 
 class ModelInterface:
@@ -93,10 +94,20 @@ class ModelInterface:
             print(f'\tLoading model {model_name}. This may take a while if you have never used this model.')
             
             try:
-                self.model = WhisperModel(model_size_or_path=USER_PREFS['model'])
+                try:
+                    self.model = BatchedInferencePipeline(
+                        WhisperModel(model_size_or_path=USER_PREFS['model'], compute_type='float16')
+                    )
+                except:
+                    self.model = BatchedInferencePipeline(
+                        WhisperModel(model_size_or_path=USER_PREFS['model'])
+                    )
+                    print(f'\t\tCould not load half precision. Defaulting to full.')
             except:
                 print('\t\tWarning: issue loading model onto GPU. Using CPU.')
-                self.model = WhisperModel(model_size_or_path=USER_PREFS['model'], device='cpu')
+                self.model = BatchedInferencePipeline(
+                    WhisperModel(model_size_or_path=USER_PREFS['model'], device='cpu')
+                )
             print(f'\tLoaded model {model_name} successfully.')
         else:
             print(f'\tUsing currently loaded model ({model_name}).')
@@ -236,7 +247,7 @@ class ModelInterface:
                 for ex_key in EX_KEYS:
                     del kwargs[ex_key]
 
-                clip_timestamps = '0'
+                clip_timestamps = []
                 textgrid_path = None
                 if USER_PREFS['use_textgrid']:
                     path_no_ext = os.path.splitext(path)[0]
@@ -249,6 +260,8 @@ class ModelInterface:
                             clip_timestamps = get_clip_timestamps(textgrid_path)
                         except:
                             print(f'\tWarning: Could not find a matching textgrid file.')
+
+                using_textgrid = (clip_timestamps != [])
                 
                 segments, info = self.model.transcribe(
                     path,
@@ -256,6 +269,7 @@ class ModelInterface:
                     task = 'translate' if USER_PREFS['do_translate'] else 'transcribe',
                     clip_timestamps = clip_timestamps,
                     log_progress=True,
+                    vad_filter=not using_textgrid,
                     **kwargs
                 )
                 formatted_outputs = self.format_outputs(segments)
@@ -274,7 +288,7 @@ class ModelInterface:
                     else:
                         outputs[attr] = info.__getattribute__(attr)
                 if textgrid_path is not None:
-                    write_textgrid(textgrid_path, formatted_outputs['segment_texts'])
+                    write_textgrid_fill_utterances(textgrid_path, formatted_outputs['segment_texts'])
             self.write_outputs(outputs, formatted_outputs, fname)
             print('\tDone.')
         
