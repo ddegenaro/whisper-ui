@@ -20,7 +20,6 @@ os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
 ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
 
 import faster_whisper
-# import whisperx
 
 from whisper_ui.whisper_funcs import AVAILABLE_MODELS, ModelInterface
 from whisper_ui.handle_prefs import set_option, check_model, USER_PREFS, AVAILABLE_LANGUAGES

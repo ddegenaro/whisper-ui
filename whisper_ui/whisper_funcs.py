@@ -10,6 +10,8 @@ from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 from whisper_ui.handle_prefs import USER_PREFS, check_model
 from whisper_ui.textgrid_utils import get_clip_timestamps, write_textgrid_fill_utterances
 
+os.environ['HF_HUB_DISABLE_PROGRESS_BARS'] = '0'
+
 SUPPORTED_FILETYPES = ('flac', 'm4a', 'mp3', 'mp4', 'wav')
 
 AVAILABLE_MODELS = faster_whisper.available_models()
@@ -84,14 +86,13 @@ class ModelInterface:
         model_name = USER_PREFS["model"]
         
         if not check_model(model_name):
-            msg = f'\tError: "model" is set to "{model_name}" which has not been downloaded.\n'
-            msg += '\tYou must navigate to "Download models" and download this model first.'
+            msg = f'\t"model" is set to "{model_name}" which has not been downloaded.\n'
+            msg += f'\tAttempting to download {model_name}.'
             print(msg)
-            model_name = None
-            return
+            
         
         if self.model is None or switch_model:
-            print(f'\tLoading model {model_name}. This may take a while if you have never used this model.')
+            print(f'\tLoading model {model_name}. This may take a moment...')
             
             try:
                 try:
