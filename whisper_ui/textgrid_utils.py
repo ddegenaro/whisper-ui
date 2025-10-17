@@ -37,6 +37,7 @@ def write_textgrid_fill_utterances(fp: str, segments: list[str]):
     for interval in intervals:
         if interval[4] == '':
             if j >= len(segments):
+                print(segments)
                 raise ValueError(f"Not enough segments provided. Need at least {j+1}, but only have {len(segments)}")
             
             # Escape the pattern and do a simple string replacement

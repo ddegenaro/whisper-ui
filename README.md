@@ -1,4 +1,4 @@
-# Whisper UI 1.3.1
+# Whisper UI 1.3.2
 
 A simple GUI to transcribe audio using OpenAI's Whisper models.
 

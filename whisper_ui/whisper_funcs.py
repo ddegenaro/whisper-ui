@@ -213,8 +213,8 @@ class ModelInterface:
             return
         
         if not os.path.exists(USER_PREFS['output_dir']):
-            print(f'Output directory {USER_PREFS["output_dir"]} does not exist. Canceling.\n')
-            return
+            print(f'Output directory {USER_PREFS["output_dir"]} does not exist. Creating it.\n')
+            os.makedirs(USER_PREFS['output_dir'])
         
         print(f'Beginning transcription of {len(paths)} audio file(s).')
 
