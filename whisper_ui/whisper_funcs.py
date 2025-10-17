@@ -87,7 +87,8 @@ class ModelInterface:
         
         if not check_model(model_name):
             msg = f'\t"model" is set to "{model_name}" which has not been downloaded.\n'
-            msg += f'\tAttempting to download {model_name}.'
+            msg += f'\tYou should first download this model from the "Download models" menu.\n'
+            msg += f'\tCanceling. No files processed.'
             print(msg)
             
         
