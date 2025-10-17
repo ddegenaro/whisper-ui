@@ -90,6 +90,7 @@ class ModelInterface:
             msg += f'\tYou should first download this model from the "Download models" menu.\n'
             msg += f'\tCanceling. No files processed.'
             print(msg)
+            return
             
         
         if self.model is None or switch_model:
