@@ -265,8 +265,6 @@ class ModelInterface:
                             print(f'\tWarning: Could not find a matching textgrid file.')
 
                 using_textgrid = (clip_timestamps != [])
-
-                print(clip_timestamps)
                 
                 segments, info = self.model.transcribe(
                     path,
