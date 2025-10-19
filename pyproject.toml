@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "whisper_ui"
-version = "1.3.3"
+version = "1.3.4"
 authors = [
   { name="Dan DeGenaro", email="drd92@georgetown.edu" },
 ]

@@ -467,7 +467,7 @@ class MainGUI(TkinterDnD.Tk):
         TkinterDnD.Tk.__init__(self)
         # window
 
-        self.version = '1.3.3'
+        self.version = '1.3.4'
 
         self.title(f"Whisper User Interface v.{self.version}")
         w = 1067 # width for the Tk root
