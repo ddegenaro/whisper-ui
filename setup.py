@@ -16,9 +16,10 @@ with open('README.md', 'r') as f:
 
 # Define dependencies
 INSTALL_REQUIRES = [
+    'certifi',
     'openai-whisper',
-    'tkinterdnd2'
-    # Add other dependencies here
+    'tkinterdnd2',
+    'faster-whisper'
 ]
 
 # Package configuration

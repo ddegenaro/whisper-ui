@@ -64,9 +64,9 @@ def ffmpeg_download():
                 # download zip to downloads
                 os.system(f'start {WINDOWS_FFMPEG_LINK}')
                 # extract to C:\Program Files\ffmpeg
-                os.system('powershell.exe Expand-Archive -Path "$env:USERPROFILE\Downloads\ffmpeg-master-latest-win64-lgpl.zip" -DestinationPath "C:\Program Files"')
+                os.system(r'powershell.exe Expand-Archive -Path "$env:USERPROFILE\Downloads\ffmpeg-master-latest-win64-lgpl.zip" -DestinationPath "C:\Program Files"')
                 # add to path
-                os.system('setx path "%path%;C:\Program Files\ffmpeg\bin"')
+                os.system(r'setx path "%path%;C:\Program Files\ffmpeg\bin"')
             # if linux
             elif os.name == 'posix':
                 # download tar to downloads
@@ -467,7 +467,7 @@ class MainGUI(TkinterDnD.Tk):
         TkinterDnD.Tk.__init__(self)
         # window
 
-        self.version = '1.3.4'
+        self.version = '1.3.5'
 
         self.title(f"Whisper User Interface v.{self.version}")
         w = 1067 # width for the Tk root
